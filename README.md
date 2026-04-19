@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="docs/images/logo_readme.png" alt="MythosForge" width="220" height="220" />
+<img src="docs/images/logo_readme.png" alt="MythosForge" width="320" height="320" />
 
 # 🔥 MythosForge
 
