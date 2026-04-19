@@ -160,6 +160,21 @@ const translations = {
     "contribute.discuss.title": "Discute Ideas",
     "contribute.discuss.desc": "Propón experimentos, comparte resultados o debate sobre la arquitectura RDT en las discusiones del repositorio.",
 
+    // API
+    "nav.api": "API",
+    "api.sectionBadge": "API REST",
+    "api.sectionTitle": "API Real del Proyecto",
+    "api.sectionDesc": "Servidor FastAPI con datos reales, OpenAPI automático y endpoint de inferencia con OpenMythos.",
+    "api.health.title": "Health Check",
+    "api.health.desc": "Estado del servicio, versión, disponibilidad de PyTorch y OpenMythos.",
+    "api.data.title": "Datos del Proyecto",
+    "api.data.desc": "Todos los datos del sitio servidos como JSON estructurado con schemas Pydantic.",
+    "api.infer.title": "Inferencia Real",
+    "api.infer.desc": "Genera texto con el modelo OpenMythos real. Requiere PyTorch instalado.",
+    "api.docs.title": "OpenAPI Docs",
+    "api.docs.desc": "Documentación interactiva generada automáticamente desde los schemas Pydantic.",
+    "api.quickstart.title": "Arranque rápido:",
+
     // Bibliography
     "refs.sectionBadge": "Bibliografía",
     "refs.sectionTitle": "Referencias Académicas",
@@ -325,6 +340,21 @@ const translations = {
     "contribute.prs.desc": "Code patches, architecture improvements, new experiments or integrations. Read the CONTRIBUTING.md guide first.",
     "contribute.discuss.title": "Discuss Ideas",
     "contribute.discuss.desc": "Propose experiments, share results or debate about the RDT architecture in the repository discussions.",
+
+    // API
+    "nav.api": "API",
+    "api.sectionBadge": "REST API",
+    "api.sectionTitle": "Real Project API",
+    "api.sectionDesc": "FastAPI server with real data, auto-generated OpenAPI docs, and OpenMythos inference endpoint.",
+    "api.health.title": "Health Check",
+    "api.health.desc": "Service status, version, PyTorch and OpenMythos availability.",
+    "api.data.title": "Project Data",
+    "api.data.desc": "All site data served as structured JSON with Pydantic schemas.",
+    "api.infer.title": "Real Inference",
+    "api.infer.desc": "Generate text with the real OpenMythos model. Requires PyTorch installed.",
+    "api.docs.title": "OpenAPI Docs",
+    "api.docs.desc": "Interactive documentation auto-generated from Pydantic schemas.",
+    "api.quickstart.title": "Quick start:",
 
     // Bibliography
     "refs.sectionBadge": "Bibliography",

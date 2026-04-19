@@ -35,6 +35,7 @@
                 <a href="#files" data-i18n="nav.files">Archivos</a>
                 <a href="#roadmap" data-i18n="nav.roadmap">Ruta</a>
                 <a href="#refs" data-i18n="nav.refs">Bibliografía</a>
+                <a href="#api" data-i18n="nav.api">API</a>
                 <a href="#contribute" data-i18n="nav.contribute" style="color:var(--cyan)">Contribuir</a>
             </nav>
             <div class="nav-actions">
@@ -347,6 +348,61 @@ pytest -q -k "not test_spectral_radius_stable_after_large_grad_step"</code></pre
                     <h3 data-i18n="contribute.discuss.title">Discute Ideas</h3>
                     <p data-i18n="contribute.discuss.desc">Propone experimentos, comparte resultados o debate sobre la arquitectura RDT en las discusiones del repositorio.</p>
                 </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- API -->
+    <section id="api" class="section section-alt">
+        <div class="section-inner">
+            <div class="section-header">
+                <span class="section-badge" data-i18n="api.sectionBadge">API REST</span>
+                <h2 class="section-title" data-i18n="api.sectionTitle">API Real del Proyecto</h2>
+                <p class="section-desc" data-i18n="api.sectionDesc">Servidor FastAPI con datos reales, OpenAPI automático y endpoint de inferencia con OpenMythos.</p>
+            </div>
+            <div class="api-grid">
+                <div class="feature-card" style="border-color:rgba(0,212,255,0.3)">
+                    <div class="feature-icon" style="--c:#00D4FF"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div>
+                    <h3 data-i18n="api.health.title">Health Check</h3>
+                    <div class="code-block" style="margin:12px 0"><pre><code>GET /api/v1/health</code></pre></div>
+                    <p data-i18n="api.health.desc">Estado del servicio, versión, disponibilidad de PyTorch y OpenMythos.</p>
+                </div>
+                <div class="feature-card" style="border-color:rgba(255,184,0,0.3)">
+                    <div class="feature-icon" style="--c:#FFB800"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></div>
+                    <h3 data-i18n="api.data.title">Datos del Proyecto</h3>
+                    <div class="code-block" style="margin:12px 0"><pre><code>GET /api/v1/architecture
+GET /api/v1/components
+GET /api/v1/validation
+GET /api/v1/roadmap
+GET /api/v1/references</code></pre></div>
+                    <p data-i18n="api.data.desc">Todos los datos del sitio servidos como JSON estructurado con schemas Pydantic.</p>
+                </div>
+                <div class="feature-card" style="border-color:rgba(0,232,123,0.3)">
+                    <div class="feature-icon" style="--c:#00E87B"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
+                    <h3 data-i18n="api.infer.title">Inferencia Real</h3>
+                    <div class="code-block" style="margin:12px 0"><pre><code>POST /api/v1/inference
+{
+  "prompt": "...",
+  "attn_type": "gqa",
+  "n_loops": 4
+}</code></pre></div>
+                    <p data-i18n="api.infer.desc">Genera texto con el modelo OpenMythos real. Requiere PyTorch instalado.</p>
+                </div>
+                <div class="feature-card" style="border-color:rgba(167,139,250,0.3)">
+                    <div class="feature-icon" style="--c:#A78BFA"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
+                    <h3 data-i18n="api.docs.title">OpenAPI Docs</h3>
+                    <div class="code-block" style="margin:12px 0"><pre><code>/docs  → Swagger UI
+/redoc → ReDoc
+/openapi.json → Schema</code></pre></div>
+                    <p data-i18n="api.docs.desc">Documentación interactiva generada automáticamente desde los schemas Pydantic.</p>
+                </div>
+            </div>
+            <div class="info-box" style="margin-top:24px">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FFB800" stroke-width="2"><path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
+                <div>
+                    <strong data-i18n="api.quickstart.title">Arranque rápido:</strong>
+                    <code style="color:var(--cyan);font-family:'JetBrains Mono',monospace;font-size:0.85em">pip install -r api/requirements.txt && python -m api</code>
+                </div>
             </div>
         </div>
     </section>

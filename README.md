@@ -13,6 +13,7 @@
 [![CI/CD](https://img.shields.io/badge/CI%2FCD-Actions-2088FF?style=for-the-badge&logo=githubactions&logoColor=0A1628)](.github/workflows/pages.yml)
 [![i18n](https://img.shields.io/badge/i18n-ES%20%2F%20EN-A78BFA?style=for-the-badge&logo=googletranslate&logoColor=0A1628)](https://smouj.github.io/MythosForge/)
 [![Security](https://img.shields.io/badge/Security-Policy-00E87B?style=for-the-badge&logo=shield&logoColor=0A1628)](SECURITY.md)
+[![API](https://img.shields.io/badge/API-v1-FF6B9D?style=for-the-badge&logo=fastapi&logoColor=0A1628)](api/README.md)
 
 *Laboratorio de investigación sobre transformers recurrentes en profundidad, razonamiento latente, MoE, atención MLA/GQA, inyección LTI estable y halting adaptativo.*
 
@@ -256,10 +257,76 @@ git apply openmythos_lti_patch.diff
 
 ---
 
+## 🌐 API REST
+
+MythosForge incluye una **API REST real** construida con FastAPI. Sirve todos los datos del proyecto como JSON estructurado con schemas Pydantic, e incluye un endpoint de inferencia con el modelo OpenMythos.
+
+### Arranque rápido
+
+```bash
+pip install -r api/requirements.txt
+python -m api
+# → http://localhost:8000/docs (Swagger UI)
+```
+
+### Endpoints principales
+
+| Método | Endpoint | Descripción |
+|--------|----------|-------------|
+| `GET` | `/api/v1/health` | Estado del servicio y dependencias |
+| `GET` | `/api/v1/info` | Información del proyecto |
+| `GET` | `/api/v1/architecture` | Arquitectura completa |
+| `GET` | `/api/v1/components` | Componentes arquitectónicos |
+| `GET` | `/api/v1/components/{slug}` | Componente específico |
+| `GET` | `/api/v1/validation` | Resultados de validación |
+| `GET` | `/api/v1/roadmap` | Hoja de ruta |
+| `GET` | `/api/v1/references` | Referencias académicas |
+| `GET` | `/api/v1/i18n/{lang}` | Traducciones (es/en) |
+| `POST` | `/api/v1/inference` | Inferencia con OpenMythos |
+
+### Inferencia real
+
+```bash
+# Instalar PyTorch + OpenMythos
+pip install torch --index-url https://download.pytorch.org/whl/cpu
+git clone https://github.com/kyegomez/OpenMythos.git && cd OpenMythos && pip install -e .
+
+# Ejecutar inferencia
+curl -X POST http://localhost:8000/api/v1/inference \
+  -H "Content-Type: application/json" \
+  -d '{"prompt": "Test", "attn_type": "gqa", "n_loops": 4}'
+```
+
+### Docker
+
+```bash
+# Modo datos (ligero)
+docker build -f api/Dockerfile -t mythosforge-api .
+docker run -p 8000:8000 mythosforge-api
+
+# Modo completo con inferencia
+docker build -f api/Dockerfile.full -t mythosforge-api-full .
+docker run -p 8000:8000 mythosforge-api-full
+```
+
+---
+
 ## 📂 Estructura del Repositorio
 
 ```
 MythosForge/
+├── api/
+│   ├── __init__.py              # Paquete API (v0.2.0)
+│   ├── __main__.py              # python -m api (arranque directo)
+│   ├── app.py                   # FastAPI app — todos los endpoints
+│   ├── models.py                # Schemas Pydantic v2
+│   ├── data.py                  # Datos reales del proyecto
+│   ├── routers/
+│   │   └── inference.py         # Endpoint de inferencia OpenMythos
+│   ├── requirements.txt          # Dependencias API
+│   ├── Dockerfile               # Docker (modo datos)
+│   ├── Dockerfile.full          # Docker (inferencia completa)
+│   └── README.md                # Documentación API
 ├── docs/
 │   ├── index.html              # GitHub Pages — Landing estática (i18n ES/EN)
 │   ├── i18n.js                  # Motor de traducciones ES/EN (~170 claves)

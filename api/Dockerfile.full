@@ -1,0 +1,26 @@
+# Run API locally
+FROM python:3.11-slim
+
+WORKDIR /app
+
+# Install API dependencies
+COPY api/requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Install PyTorch CPU (for inference endpoint)
+RUN pip install --no-cache-dir torch --index-url https://download.pytorch.org/whl/cpu
+
+# Install OpenMythos (cloned at build time)
+RUN git clone https://github.com/kyegomez/OpenMythos.git /opt/openmythos && \
+    cd /opt/openmythos && \
+    pip install --no-cache-dir -r requirements.txt && \
+    pip install --no-cache-dir -e .
+
+# Copy API code
+COPY api/ ./api/
+
+# Expose port
+EXPOSE 8000
+
+# Run with uvicorn
+CMD ["uvicorn", "api.app:app", "--host", "0.0.0.0", "--port", "8000", "--log-level", "info"]
