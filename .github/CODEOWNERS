@@ -1,0 +1,15 @@
+# Code Owners
+
+# Default owner for everything
+* @smouj
+
+# Documentation and website
+/docs/ @smouj
+README.md @smouj
+
+# Source code and research files
+/src/ @smouj
+
+# Collaboration infrastructure
+/.github/ @smouj
+CONTRIBUTING.md @smouj

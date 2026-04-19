@@ -1,0 +1,87 @@
+name: Deploy GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate HTML
+        run: |
+          echo "Checking HTML structure..."
+          if grep -q '<html' docs/index.html; then
+            echo "✅ index.html found and valid"
+          else
+            echo "❌ index.html missing or invalid"
+            exit 1
+          fi
+
+      - name: Check required assets
+        run: |
+          MISSING=0
+          for file in docs/index.html docs/assets/style.css docs/i18n.js \
+                       docs/images/logo.png docs/images/logo_readme.png \
+                       docs/images/favicon.png docs/images/social_banner.png; do
+            if [ -f "$file" ]; then
+              echo "✅ $file"
+            else
+              echo "❌ $file MISSING"
+              MISSING=1
+            fi
+          done
+          exit $MISSING
+
+      - name: Check for secrets in tracked files
+        run: |
+          echo "Scanning for potential secrets..."
+          if git grep -qE '(ghp_|AKIA|private_key|secret_key|api_key.*=.*['\''"])' -- '*.py' '*.js' '*.html' '*.md' '*.yml' '*.json' '*.cfg' '*.env' 2>/dev/null; then
+            echo "⚠️  Warning: potential secret patterns found"
+            git grep -nE '(ghp_|AKIA|private_key|secret_key|api_key.*=.*['\''"])' -- '*.py' '*.js' '*.html' '*.md' '*.yml' '*.json' '*.cfg' '*.env' 2>/dev/null || true
+          else
+            echo "✅ No secret patterns detected"
+          fi
+
+      - name: Check file sizes
+        run: |
+          echo "Checking asset sizes..."
+          find docs/images -name "*.png" -exec du -h {} \; | sort -rh
+          MAX_SIZE=$(find docs/images -name "*.png" -exec du -b {} \; | sort -rn | head -1 | cut -f1)
+          if [ "$MAX_SIZE" -gt 5000000 ]; then
+            echo "⚠️  Warning: largest image is $(numfmt --to=iec $MAX_SIZE), consider optimizing"
+          else
+            echo "✅ All images under 5MB"
+          fi
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

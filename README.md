@@ -10,7 +10,9 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-FFB800?style=for-the-badge&logo=opensourceinitiative&logoColor=0A1628)](LICENSE)
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10+-00E87B?style=for-the-badge&logo=python&logoColor=0A1628)](https://python.org)
 [![PyTorch](https://img.shields.io/badge/PyTorch-2.10+-EE4C2C?style=for-the-badge&logo=pytorch&logoColor=0A1628)](https://pytorch.org)
-[![Next.js](https://img.shields.io/badge/Next.js-16-000000?style=for-the-badge&logo=nextdotjs&logoColor=white)](https://nextjs.org)
+[![CI/CD](https://img.shields.io/badge/CI%2FCD-Actions-2088FF?style=for-the-badge&logo=githubactions&logoColor=0A1628)](.github/workflows/pages.yml)
+[![i18n](https://img.shields.io/badge/i18n-ES%20%2F%20EN-A78BFA?style=for-the-badge&logo=googletranslate&logoColor=0A1628)](https://smouj.github.io/MythosForge/)
+[![Security](https://img.shields.io/badge/Security-Policy-00E87B?style=for-the-badge&logo=shield&logoColor=0A1628)](SECURITY.md)
 
 *Laboratorio de investigación sobre transformers recurrentes en profundidad, razonamiento latente, MoE, atención MLA/GQA, inyección LTI estable y halting adaptativo.*
 
@@ -28,26 +30,42 @@
 
 <div align="center">
 
-### Hero & Navegación
+<details open>
+<summary><strong>Español (ES)</strong></summary>
+
+#### Hero & Navegación
 <img src="docs/images/01-hero.png" alt="MythosForge Hero" width="800" />
 
-### Diagrama de Arquitectura
+#### Diagrama de Arquitectura
 <img src="docs/images/02-architecture.png" alt="Architecture Diagram" width="800" />
 
-### Componentes Arquitectónicos
+#### Componentes Arquitectónicos
 <img src="docs/images/03-components.png" alt="Components" width="800" />
 
-### Validación Práctica
+#### Validación Práctica
 <img src="docs/images/04-validation.png" alt="Validation" width="800" />
 
-### Guía Rápida & Archivos
-<img src="docs/images/05-files.png" alt="Quickstart & Files" width="800" />
+#### Guía Rápida
+<img src="docs/images/05-guide.png" alt="Quickstart Guide" width="800" />
 
-### Hoja de Ruta
-<img src="docs/images/06-roadmap.png" alt="Roadmap" width="800" />
+#### Archivos Descargables
+<img src="docs/images/06-files.png" alt="Downloadable Files" width="800" />
 
-### Bibliografía
-<img src="docs/images/07-bibliography.png" alt="Bibliography" width="800" />
+#### Hoja de Ruta
+<img src="docs/images/07-roadmap.png" alt="Roadmap" width="800" />
+
+#### Bibliografía
+<img src="docs/images/08-bibliography.png" alt="Bibliography" width="800" />
+
+</details>
+
+<details>
+<summary><strong>English (EN)</strong></summary>
+
+#### Hero Section (EN)
+<img src="docs/images/09-hero-en.png" alt="MythosForge Hero EN" width="800" />
+
+</details>
 
 </div>
 
@@ -243,29 +261,47 @@ git apply openmythos_lti_patch.diff
 ```
 MythosForge/
 ├── docs/
-│   ├── index.html              # GitHub Pages — Landing estática
+│   ├── index.html              # GitHub Pages — Landing estática (i18n ES/EN)
+│   ├── i18n.js                  # Motor de traducciones ES/EN (~170 claves)
 │   ├── assets/
-│   │   └── style.css           # Estilos de GitHub Pages
+│   │   └── style.css           # Estilos profesionales (dark theme)
 │   └── images/
-│       ├── logo.png            # Logo del proyecto (transparente)
+│       ├── logo.png            # Logo del proyecto
 │       ├── logo_readme.png     # Logo oficial (fondo negro + icono blanco)
 │       ├── favicon.png         # Favicon
-│       ├── social_banner.png   # Banner social (OG/Twitter card)
-│       └── 01-hero.png         # Screenshots de la app
+│       ├── social_banner.png   # Banner social (OG/Twitter card, 1200x630)
+│       └── 01-hero.png         # Screenshots por sección (element-based)
 │       ├── 02-architecture.png
 │       ├── 03-components.png
 │       ├── 04-validation.png
-│       ├── 05-files.png
-│       ├── 06-roadmap.png
-│       └── 07-bibliography.png
+│       ├── 05-guide.png
+│       ├── 06-files.png
+│       ├── 07-roadmap.png
+│       ├── 08-bibliography.png
+│       └── 09-hero-en.png
 ├── src/
 │   ├── OpenMythos_Guia_Tecnica_2026.pdf   # Guía técnica completa
 │   ├── OpenMythos_Guia_Tecnica_2026.docx  # Versión editable
 │   ├── openmythos_quickstart.py           # Script de verificación mínima
 │   └── openmythos_lti_patch.diff          # Parche de estabilidad LTI
-├── LICENSE                           # Licencia MIT
-├── README.md                         # Este archivo
-└── .gitignore                        # Git ignore rules
+├── .github/
+│   ├── CODEOWNERS              # Responsables de revisión por área
+│   ├── FUNDING.yml             # GitHub Sponsors
+│   ├── SECURITY.md             # Política de seguridad
+│   ├── dependabot.yml          # Actualización automática de dependencias
+│   ├── workflows/
+│   │   └── pages.yml           # CI/CD: deploy automático a GitHub Pages
+│   ├── ISSUE_TEMPLATE/
+│   │   ├── bug_report.md
+│   │   ├── feature_request.md
+│   │   └── experiment.md
+│   └── PULL_REQUEST_TEMPLATE/
+│       └── pull_request_template.md
+├── CONTRIBUTING.md             # Guía de contribuciones
+├── SECURITY.md                 # Política de seguridad
+├── LICENSE                     # Licencia MIT
+├── README.md                   # Este archivo
+└── .gitignore                  # Git ignore rules
 ```
 
 ---

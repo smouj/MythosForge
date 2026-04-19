@@ -1,0 +1,36 @@
+version: 2
+updates:
+  # Check for GitHub Actions updates monthly
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "monthly"
+    labels:
+      - "dependencies"
+      - "automated"
+    
+  # Check for npm dependencies (if added in the future)
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "monthly"
+    labels:
+      - "dependencies"
+      - "automated"
+    allow:
+      - dependency-type: "production"
+    ignore:
+      # Ignore major version bumps to avoid breaking changes
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
+    
+  # Check for pip/python dependencies (if added in the future)
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "monthly"
+    labels:
+      - "dependencies"
+      - "automated"
+    allow:
+      - dependency-type: "production"
