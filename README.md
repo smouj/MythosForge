@@ -334,7 +334,7 @@ El repositorio original OpenMythos también se distribuye bajo licencia MIT.
 
 <div align="center">
 
-**Hecho con 🔥 por [Z.AI Research Lab](https://github.com/smouj)**
+**Creado por [Smouj013](https://github.com/smouj) con agentes de IA**
 
 *Documento técnico independiente — Abril 2026*
 
