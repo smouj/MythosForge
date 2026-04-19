@@ -86,6 +86,7 @@ La hipótesis central que investigamos: **la profundidad útil no tiene por qué
 | Documentar la arquitectura completa | ✅ Completado |
 | Inferencia mínima con GQA y MLA | ✅ Verificado |
 | Proporcionar parche de estabilidad LTI | ✅ Disponible |
+| API PyTorch propia (mythosforge) | ✅ 30/30 tests |
 | Servir como base de investigación seria | ✅ Activo |
 
 ### ¿Qué NO Afirmamos?
@@ -203,7 +204,7 @@ def get_A(self) -> torch.Tensor:
 
 ## ✅ Validación Práctica
 
-Ejecutado localmente en CPU con **PyTorch 2.10.0+cpu** y configuraciones pequeñas.
+Ejecutado localmente en CPU con **PyTorch 2.11.0+cpu** y configuraciones pequeñas.
 
 | Chequeo | Resultado |
 |---|---|
@@ -212,6 +213,8 @@ Ejecutado localmente en CPU con **PyTorch 2.10.0+cpu** y configuraciones pequeñ
 | Forward mínimo con MLA | ✅ Correcto |
 | Generación mínima autoregresiva | ✅ Correcta |
 | Matriz A de LTI en rango estable | ✅ Correcto |
+| Tests mythosforge (30/30) | ✅ Todos pasados |
+| Demo GQA + MLA + comparativa | ✅ Correcta |
 | `test_spectral_radius_stable_after_large_grad_step` | ⚠️ Fallo numérico (parcheado) |
 
 ### Hallazgo Importante
@@ -253,6 +256,75 @@ pytest -q -k "not test_spectral_radius_stable_after_large_grad_step"
 
 ```bash
 git apply openmythos_lti_patch.diff
+```
+
+---
+
+## 🧬 API PyTorch — `mythosforge`
+
+Implementación **puramente PyTorch**, autocontenida y sin dependencias externas de ML. Cada componente es un módulo aislado, testeable y conmutable.
+
+### Instalación
+
+```bash
+pip install torch  # única dependencia
+git clone https://github.com/smouj/MythosForge.git
+cd MythosForge
+export PYTHONPATH=src
+```
+
+### Uso mínimo — 3 líneas
+
+```python
+from mythosforge import OpenMythos, MythosConfig
+
+cfg = MythosConfig(vocab_size=256, dim=64, n_heads=4, n_kv_heads=4,
+                    max_seq_len=64, max_loop_iters=4, attn_type="gqa")
+model = OpenMythos(cfg).eval()
+logits = model(torch.randint(0, 256, (1, 8)), n_loops=4)
+```
+
+### Cambiar a MLA
+
+```python
+cfg = MythosConfig(..., attn_type="mla", kv_lora_rank=64,
+                    q_lora_rank=128, qk_rope_head_dim=64,
+                    qk_nope_head_dim=128, v_head_dim=128)
+model = OpenMythos(cfg)
+```
+
+### Generación autoregresiva
+
+```python
+generated = model.generate(prompt_ids, max_new_tokens=32, n_loops=4,
+                           temperature=0.8, top_k=50)
+```
+
+### Ejecutar tests (30 tests)
+
+```bash
+python -m pytest tests/test_mythosforge.py -v
+```
+
+### Ejecutar demo completa
+
+```bash
+PYTHONPATH=src python src/mythosforge_demo.py
+```
+
+### Estructura del paquete
+
+```
+src/mythosforge/
+├── __init__.py        # API pública: OpenMythos, MythosConfig
+├── config.py          # MythosConfig — hyperparámetros centralizados
+├── attention.py       # GroupedQueryAttention + MultiLatentAttention
+├── moe.py             # MoELayer — routed + shared experts (DeepSeekMoE)
+├── lti.py             # LTIInjection — estado recurrente A ∈ (0,1)
+├── act.py             # AdaptiveComputationTime — halting por posición
+├── block.py           # RecurrentBlock + LoRAAdapter + DepthSignal
+├── model.py           # OpenMythos — Prelude → Recurrent(×N) → Coda
+└── utils.py           # RMSNorm, SwiGLU, RotaryEmbedding, helpers
 ```
 
 ---
@@ -347,10 +419,23 @@ MythosForge/
 │       ├── 08-bibliography.png
 │       └── 09-hero-en.png
 ├── src/
+│   ├── mythosforge/                       # Paquete PyTorch (implementación propia)
+│   │   ├── __init__.py                   # API pública
+│   │   ├── config.py                     # MythosConfig
+│   │   ├── attention.py                  # GQA + MLA switchable
+│   │   ├── moe.py                        # MoE (routed + shared)
+│   │   ├── lti.py                        # LTI state injection
+│   │   ├── act.py                        # Adaptive Computation Time
+│   │   ├── block.py                      # RecurrentBlock + LoRA
+│   │   ├── model.py                      # OpenMythos full model
+│   │   └── utils.py                      # RMSNorm, SwiGLU, RoPE
+│   ├── mythosforge_demo.py               # Demo completa GQA + MLA
 │   ├── OpenMythos_Guia_Tecnica_2026.pdf   # Guía técnica completa
 │   ├── OpenMythos_Guia_Tecnica_2026.docx  # Versión editable
-│   ├── openmythos_quickstart.py           # Script de verificación mínima
+│   ├── openmythos_quickstart.py           # Script de verificación (OpenMythos ext.)
 │   └── openmythos_lti_patch.diff          # Parche de estabilidad LTI
+├── tests/
+│   └── test_mythosforge.py               # 30 tests — todos los componentes
 ├── .github/
 │   ├── CODEOWNERS              # Responsables de revisión por área
 │   ├── FUNDING.yml             # GitHub Sponsors
@@ -379,7 +464,7 @@ MythosForge/
 |---|---|---|
 | 0 | Congelar versión (fork, tag, requirements-lock) | ✅ |
 | 1 | Corregir estabilidad operativa (parche LTI) | ✅ |
-| 2 | Añadir empaquetado (pyproject.toml, CLI) | 🔲 |
+| 2 | Añadir empaquetado (pyproject.toml, CLI) | ✅ mythosforge |
 | 3 | Tokenizer y datos (tokenizer, dataset, causal LM) | 🔲 |
 | 4 | Entrenamiento mínimo (train.py, warmup, checkpoints) | 🔲 |
 | 5 | Benchmarks (curvas vs loops, GQA vs MLA, ablations) | 🔲 |
