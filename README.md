@@ -13,11 +13,12 @@
 [![CI/CD](https://img.shields.io/badge/CI%2FCD-Actions-2088FF?style=for-the-badge&logo=githubactions&logoColor=0A1628)](.github/workflows/pages.yml)
 [![i18n](https://img.shields.io/badge/i18n-ES%20%2F%20EN-A78BFA?style=for-the-badge&logo=googletranslate&logoColor=0A1628)](https://smouj.github.io/MythosForge/)
 [![Security](https://img.shields.io/badge/Security-Policy-00E87B?style=for-the-badge&logo=shield&logoColor=0A1628)](SECURITY.md)
-[![API](https://img.shields.io/badge/API-v1-FF6B9D?style=for-the-badge&logo=fastapi&logoColor=0A1628)](api/README.md)
+[![API v0.5.0](https://img.shields.io/badge/API-v0.5.0-FF6B9D?style=for-the-badge&logo=fastapi&logoColor=0A1628)](api/README.md)
+[![Tests: 39/39](https://img.shields.io/badge/Tests-39%2F39-00E87B?style=for-the-badge&logo=pytest&logoColor=0A1628)](api/tests/test_api.py)
 
 *Laboratorio de investigación sobre transformers recurrentes en profundidad, razonamiento latente, MoE, atención MLA/GQA, inyección LTI estable y halting adaptativo.*
 
-[🌐 Demo en Vivo](https://smouj.github.io/MythosForge/) · [📖 Guía Técnica](src/OpenMythos_Guia_Tecnica_2026.pdf) · [🐍 Quickstart](src/openmythos_quickstart.py) · [🔧 Parche LTI](src/openmythos_lti_patch.diff)
+[🌐 Demo en Vivo](https://smouj.github.io/MythosForge/) · [📖 Guía Técnica](src/OpenMythos_Guia_Tecnica_2026.pdf) · [🐍 Quickstart](src/openmythos_quickstart.py) · [🔧 Parche LTI](src/openmythos_lti_patch.diff) · [📋 Changelog](CHANGELOG.md)
 
 ---
 
@@ -87,6 +88,8 @@ La hipótesis central que investigamos: **la profundidad útil no tiene por qué
 | Inferencia mínima con GQA y MLA | ✅ Verificado |
 | Proporcionar parche de estabilidad LTI | ✅ Disponible |
 | API PyTorch propia (mythosforge) | ✅ 30/30 tests |
+| API REST profesional (FastAPI) | ✅ 39/39 tests |
+| Auth, métricas, CORS seguro | ✅ v0.5.0 |
 | Servir como base de investigación seria | ✅ Activo |
 
 ### ¿Qué NO Afirmamos?
@@ -215,6 +218,7 @@ Ejecutado localmente en CPU con **PyTorch 2.11.0+cpu** y configuraciones pequeñ
 | Matriz A de LTI en rango estable | ✅ Correcto |
 | Tests mythosforge (30/30) | ✅ Todos pasados |
 | Demo GQA + MLA + comparativa | ✅ Correcta |
+| API REST tests (39/39) | ✅ Todos pasados |
 | `test_spectral_radius_stable_after_large_grad_step` | ⚠️ Fallo numérico (parcheado) |
 
 ### Hallazgo Importante
@@ -329,9 +333,9 @@ src/mythosforge/
 
 ---
 
-## 🌐 API REST
+## 🌐 API REST (v0.5.0)
 
-MythosForge incluye una **API REST real** construida con FastAPI. Sirve todos los datos del proyecto como JSON estructurado con schemas Pydantic, e incluye un endpoint de inferencia con el modelo OpenMythos.
+MythosForge incluye una **API REST profesional** construida con FastAPI. Arquitectura en capas con routers separados, error handling seguro, autenticación opcional, métricas y 39 tests de integración.
 
 ### Arranque rápido
 
@@ -341,11 +345,28 @@ python -m api
 # → http://localhost:8000/docs (Swagger UI)
 ```
 
+### Configuración
+
+Todas las opciones se configuran mediante variables de entorno con prefijo `MYTHOSFORGE_`:
+
+```bash
+# Copiar y editar configuración
+cp .env.example .env
+
+# Configurar desde entorno
+export MYTHOSFORGE_ENV=production
+export MYTHOSFORGE_AUTH_ENABLED=true
+export MYTHOSFORGE_API_KEYS='["mf_your_key_here"]'
+export MYTHOSFORGE_CORS_ORIGINS='["https://yourdomain.com"]'
+```
+
 ### Endpoints principales
 
 | Método | Endpoint | Descripción |
 |--------|----------|-------------|
+| `GET` | `/` | API root con links a endpoints |
 | `GET` | `/api/v1/health` | Estado del servicio y dependencias |
+| `GET` | `/api/v1/metrics` | Métricas (counters, histograms) |
 | `GET` | `/api/v1/info` | Información del proyecto |
 | `GET` | `/api/v1/architecture` | Arquitectura completa |
 | `GET` | `/api/v1/components` | Componentes arquitectónicos |
@@ -354,14 +375,24 @@ python -m api
 | `GET` | `/api/v1/roadmap` | Hoja de ruta |
 | `GET` | `/api/v1/references` | Referencias académicas |
 | `GET` | `/api/v1/i18n/{lang}` | Traducciones (es/en) |
-| `POST` | `/api/v1/inference` | Inferencia con OpenMythos |
+| `POST` | `/api/v1/inference` | Inferencia con mythosforge |
+| `GET` | `/api/v1/inference/status` | Estado de dependencias de inferencia |
+
+### Seguridad
+
+| Feature | Detalle |
+|---|---|
+| CORS | Restringido a allowlist (no wildcard) |
+| Error handling | Sin leaks de detalles internos |
+| Request ID | `X-Request-ID` en todas las respuestas |
+| Auth | API key opcional (Bearer / X-API-Key) |
+| Metrics | Endpoint protegido, desactivable |
 
 ### Inferencia real
 
 ```bash
-# Instalar PyTorch + OpenMythos
+# Instalar PyTorch
 pip install torch --index-url https://download.pytorch.org/whl/cpu
-git clone https://github.com/kyegomez/OpenMythos.git && cd OpenMythos && pip install -e .
 
 # Ejecutar inferencia
 curl -X POST http://localhost:8000/api/v1/inference \
@@ -388,13 +419,23 @@ docker run -p 8000:8000 mythosforge-api-full
 ```
 MythosForge/
 ├── api/
-│   ├── __init__.py              # Paquete API (v0.2.0)
+│   ├── __init__.py              # Paquete API (v0.5.0)
 │   ├── __main__.py              # python -m api (arranque directo)
-│   ├── app.py                   # FastAPI app — todos los endpoints
+│   ├── app.py                   # FastAPI app — CORS, middleware, system routes
+│   ├── settings.py              # Pydantic Settings — env config (MYTHOSFORGE_*)
+│   ├── errors.py                # Safe error handlers — no detail leaks
+│   ├── deps.py                  # FastAPI dependencies (health builder)
 │   ├── models.py                # Schemas Pydantic v2
-│   ├── data.py                  # Datos reales del proyecto
+│   ├── data.py                  # Datos reales del proyecto (catálogo estático)
 │   ├── routers/
-│   │   └── inference.py         # Endpoint de inferencia OpenMythos
+│   │   ├── public.py            # Catálogo: info, arch, components, refs, i18n
+│   │   └── inference.py         # Inferencia con mythosforge
+│   ├── security/
+│   │   └── auth.py              # API key auth (Bearer / X-API-Key)
+│   ├── observability/
+│   │   └── metrics.py           # In-process metrics registry
+│   ├── tests/
+│   │   └── test_api.py          # 39 integration tests (TestClient)
 │   ├── requirements.txt          # Dependencias API
 │   ├── Dockerfile               # Docker (modo datos)
 │   ├── Dockerfile.full          # Docker (inferencia completa)
@@ -404,56 +445,41 @@ MythosForge/
 │   ├── i18n.js                  # Motor de traducciones ES/EN (~170 claves)
 │   ├── assets/
 │   │   └── style.css           # Estilos profesionales (dark theme)
-│   └── images/
-│       ├── logo.png            # Logo del proyecto
-│       ├── logo_readme.png     # Logo oficial (fondo negro + icono blanco)
-│       ├── favicon.png         # Favicon
-│       ├── social_banner.png   # Banner social (OG/Twitter card, 1200x630)
-│       └── 01-hero.png         # Screenshots por sección (element-based)
-│       ├── 02-architecture.png
-│       ├── 03-components.png
-│       ├── 04-validation.png
-│       ├── 05-guide.png
-│       ├── 06-files.png
-│       ├── 07-roadmap.png
-│       ├── 08-bibliography.png
-│       └── 09-hero-en.png
+│   └── images/                  # Logo, favicon, banner, screenshots
 ├── src/
-│   ├── mythosforge/                       # Paquete PyTorch (implementación propia)
-│   │   ├── __init__.py                   # API pública
-│   │   ├── config.py                     # MythosConfig
-│   │   ├── attention.py                  # GQA + MLA switchable
-│   │   ├── moe.py                        # MoE (routed + shared)
-│   │   ├── lti.py                        # LTI state injection
-│   │   ├── act.py                        # Adaptive Computation Time
-│   │   ├── block.py                      # RecurrentBlock + LoRA
-│   │   ├── model.py                      # OpenMythos full model
-│   │   └── utils.py                      # RMSNorm, SwiGLU, RoPE
-│   ├── mythosforge_demo.py               # Demo completa GQA + MLA
-│   ├── OpenMythos_Guia_Tecnica_2026.pdf   # Guía técnica completa
+│   ├── mythosforge/             # Paquete PyTorch (implementación propia)
+│   │   ├── __init__.py          # API pública
+│   │   ├── config.py            # MythosConfig
+│   │   ├── attention.py         # GQA + MLA switchable
+│   │   ├── moe.py               # MoE (routed + shared)
+│   │   ├── lti.py               # LTI state injection
+│   │   ├── act.py               # Adaptive Computation Time
+│   │   ├── block.py             # RecurrentBlock + LoRA
+│   │   ├── model.py             # OpenMythos full model
+│   │   └── utils.py             # RMSNorm, SwiGLU, RoPE
+│   ├── mythosforge_demo.py      # Demo completa GQA + MLA
+│   ├── OpenMythos_Guia_Tecnica_2026.pdf  # Guía técnica completa
 │   ├── OpenMythos_Guia_Tecnica_2026.docx  # Versión editable
-│   ├── openmythos_quickstart.py           # Script de verificación (OpenMythos ext.)
-│   └── openmythos_lti_patch.diff          # Parche de estabilidad LTI
+│   ├── openmythos_quickstart.py # Script de verificación (OpenMythos ext.)
+│   └── openmythos_lti_patch.diff # Parche de estabilidad LTI
 ├── tests/
-│   └── test_mythosforge.py               # 30 tests — todos los componentes
+│   └── test_mythosforge.py      # 30 tests — todos los componentes
 ├── .github/
-│   ├── CODEOWNERS              # Responsables de revisión por área
-│   ├── FUNDING.yml             # GitHub Sponsors
-│   ├── SECURITY.md             # Política de seguridad
-│   ├── dependabot.yml          # Actualización automática de dependencias
+│   ├── CODEOWNERS               # Responsables de revisión por área
+│   ├── FUNDING.yml              # GitHub Sponsors
+│   ├── dependabot.yml           # Actualización automática de dependencias
 │   ├── workflows/
-│   │   └── pages.yml           # CI/CD: deploy automático a GitHub Pages
-│   ├── ISSUE_TEMPLATE/
-│   │   ├── bug_report.md
-│   │   ├── feature_request.md
-│   │   └── experiment.md
-│   └── PULL_REQUEST_TEMPLATE/
-│       └── pull_request_template.md
-├── CONTRIBUTING.md             # Guía de contribuciones
-├── SECURITY.md                 # Política de seguridad
-├── LICENSE                     # Licencia MIT
-├── README.md                   # Este archivo
-└── .gitignore                  # Git ignore rules
+│   │   └── pages.yml            # CI/CD: lint + tests + deploy
+│   ├── ISSUE_TEMPLATE/          # Templates para issues
+│   └── PULL_REQUEST_TEMPLATE/   # Template para PRs
+├── .env.example                 # Variables de configuración documentadas
+├── pyproject.toml               # Dependencias fijadas + tool config
+├── CHANGELOG.md                 # Historial de versiones
+├── CONTRIBUTING.md              # Guía de contribuciones
+├── SECURITY.md                  # Política de seguridad
+├── LICENSE                      # Licencia MIT
+├── README.md                    # Este archivo
+└── .gitignore                   # Git ignore rules
 ```
 
 ---

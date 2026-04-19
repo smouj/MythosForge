@@ -248,6 +248,7 @@ async def run_inference(request: InferenceRequest):
     except Exception as e:
         logger.error(f"Inference error: {e}", exc_info=True)
         timings.total_seconds = round(time.perf_counter() - total_start, 4)
+        # Never expose internal error details to the client
         return InferenceResponse(
             success=False,
             prompt=request.prompt,
@@ -256,7 +257,7 @@ async def run_inference(request: InferenceRequest):
             num_generated=0,
             config=config,
             timings=timings,
-            error=str(e),
+            error="inference_failed",
         )
 
 

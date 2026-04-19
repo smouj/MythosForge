@@ -17,7 +17,7 @@ from api.models import (
 PROJECT_INFO = ProjectInfo(
     name="MythosForge",
     full_name="MythosForge — Recurrent-Depth Transformer Research Lab",
-    version="0.2.0",
+    version="0.5.0",
     api_version="v1",
     description=(
         "Laboratorio de investigación sobre transformers recurrentes en profundidad, "
