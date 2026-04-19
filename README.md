@@ -247,8 +247,10 @@ MythosForge/
 │   ├── assets/
 │   │   └── style.css           # Estilos de GitHub Pages
 │   └── images/
-│       ├── logo.png            # Logo del proyecto
+│       ├── logo.png            # Logo del proyecto (transparente)
+│       ├── logo_readme.png     # Logo oficial (fondo negro + icono blanco)
 │       ├── favicon.png         # Favicon
+│       ├── social_banner.png   # Banner social (OG/Twitter card)
 │       └── 01-hero.png         # Screenshots de la app
 │       ├── 02-architecture.png
 │       ├── 03-components.png
