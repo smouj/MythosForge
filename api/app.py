@@ -163,21 +163,21 @@ async def health_check():
         pt = False
 
     try:
-        import open_mythos
-        om = True
+        import sys, os
+        src_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "src")
+        if src_dir not in sys.path:
+            sys.path.insert(0, src_dir)
+        from mythosforge import OpenMythos
+        mf = True
     except ImportError:
-        try:
-            import mythos
-            om = True
-        except ImportError:
-            om = False
+        mf = False
 
     return HealthResponse(
         status="healthy",
         version=__version__,
         api_version=__api_version__,
         pytorch_available=pt,
-        openmythos_available=om,
+        openmythos_available=mf,
         uptime_seconds=round(time.perf_counter() - _start_time, 2),
     )
 

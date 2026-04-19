@@ -1,8 +1,15 @@
 """
-Inference router — Real OpenMythos model inference when PyTorch is available.
-Graceful degradation with clear setup instructions when dependencies are missing.
+Inference router — Real inference using the mythosforge package.
+
+Uses the built-in mythosforge PyTorch implementation (no external dependencies
+beyond PyTorch).  GQA and MLA are available out of the box.
+
+The model runs on CPU with a small config for demo purposes.  Token IDs are
+returned since mythosforge does not include a trained tokenizer (Phase 3).
 """
 
+import os
+import sys
 import time
 import logging
 from fastapi import APIRouter, HTTPException
@@ -15,92 +22,113 @@ logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/api/v1/inference", tags=["Inference"])
 
-# ─── Dependency detection (lazy, safe) ────────────────
+# ─── Ensure mythosforge is importable ────────────────
+
+# Add src/ to path so that `from mythosforge import ...` works
+_SRC_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "src")
+if _SRC_DIR not in sys.path:
+    sys.path.insert(0, _SRC_DIR)
+
+
+# ─── Dependency detection (lazy) ─────────────────────
 
 _pytorch_available = False
-_openmythos_available = False
-_openmythos_error = None
+_mythosforge_available = False
+_import_error: str | None = None
+
 
 def _check_dependencies():
-    """Lazily check if PyTorch and OpenMythos are importable."""
-    global _pytorch_available, _openmythos_available, _openmythos_error
-    if _pytorch_available or _openmythos_error:
-        return  # Already checked
+    """Lazily check if PyTorch and mythosforge are importable."""
+    global _pytorch_available, _mythosforge_available, _import_error
+    if _pytorch_available or _import_error:
+        return
 
     try:
         import torch
         _pytorch_available = True
-        logger.info(f"PyTorch {torch.__version__} detected on device: {torch.device('cpu')}")
+        logger.info(f"PyTorch {torch.__version__} detected")
     except ImportError:
-        _openmythos_error = (
-            "PyTorch is not installed. Install it with: pip install torch --index-url https://download.pytorch.org/whl/cpu"
+        _import_error = (
+            "PyTorch is not installed. Install it with:\n"
+            "  pip install torch --index-url https://download.pytorch.org/whl/cpu"
         )
-        logger.warning(_openmythos_error)
+        logger.warning(_import_error)
         return
 
     try:
-        # Try to import OpenMythos model components
-        from open_mythos import MythosForCausalLM, MythosConfig
-        _openmythos_available = True
-        logger.info("OpenMythos model components detected successfully")
-    except ImportError:
-        try:
-            # Alternative import paths
-            from mythos import MythosForCausalLM, MythosConfig
-            _openmythos_available = True
-            logger.info("OpenMythos model components detected (mythos import)")
-        except ImportError:
-            _openmythos_error = (
-                "OpenMythos is not installed. Clone and install it:\n"
-                "  git clone https://github.com/kyegomez/OpenMythos.git\n"
-                "  cd OpenMythos && pip install -r requirements.txt\n"
-                "  pip install -e ."
-            )
-            logger.warning(_openmythos_error)
+        from mythosforge import OpenMythos, MythosConfig
+        _mythosforge_available = True
+        logger.info("mythosforge package loaded successfully")
+    except ImportError as e:
+        _import_error = (
+            f"mythosforge package not found: {e}\n"
+            "Make sure src/mythosforge/ exists in the repository root."
+        )
+        logger.warning(_import_error)
 
 
 # ─── Model cache (singleton per process) ─────────────
 
-_model_cache = {}
+_model_cache: dict[str, object] = {}
+
 
 def _get_model(attn_type: str = "gqa"):
-    """Load or retrieve cached model instance."""
+    """Load or retrieve a cached mythosforge model."""
     if attn_type in _model_cache:
         return _model_cache[attn_type]
 
-    try:
-        import torch
-        if attn_type == "mla":
-            from open_mythos import MythosForCausalLM, MythosConfig
-        else:
-            from open_mythos import MythosForCausalLM, MythosConfig
+    from mythosforge import OpenMythos, MythosConfig
 
-        config = MythosConfig(
-            d_model=256,
+    if attn_type == "mla":
+        cfg = MythosConfig(
+            vocab_size=256,
+            dim=64,
             n_heads=4,
-            n_kv_heads=2,
-            d_ff=512,
-            n_layers=2,
-            max_seq_len=512,
-            max_loop_iters=32,
-            vocab_size=3200,
-            attn_type=attn_type,
-            use_moe=True,
-            num_experts=4,
-            num_shared_experts=1,
-            top_k=2,
-            use_lti=True,
-            use_act=True,
-            use_lora=True,
+            n_kv_heads=4,
+            max_seq_len=128,
+            max_loop_iters=8,
+            prelude_layers=1,
+            coda_layers=1,
+            n_experts=4,
+            n_shared_experts=1,
+            n_experts_per_tok=1,
+            expert_dim=64,
             lora_rank=4,
+            attn_type="mla",
+            kv_lora_rank=8,
+            q_lora_rank=16,
+            qk_rope_head_dim=8,
+            qk_nope_head_dim=8,
+            v_head_dim=8,
         )
-        model = MythosForCausalLM(config)
-        model.eval()
-        _model_cache[attn_type] = model
-        return model
-    except Exception as e:
-        logger.error(f"Failed to load model: {e}")
-        raise RuntimeError(f"Model loading failed: {str(e)}")
+    else:
+        cfg = MythosConfig(
+            vocab_size=256,
+            dim=48,
+            n_heads=4,
+            n_kv_heads=4,
+            max_seq_len=128,
+            max_loop_iters=8,
+            prelude_layers=1,
+            coda_layers=1,
+            n_experts=4,
+            n_shared_experts=1,
+            n_experts_per_tok=1,
+            expert_dim=64,
+            lora_rank=4,
+            attn_type="gqa",
+        )
+
+    model = OpenMythos(cfg)
+    model.eval()
+
+    counts = model.count_parameters()
+    logger.info(
+        f"Loaded {attn_type.upper()} model: {counts['total']:,} parameters"
+    )
+
+    _model_cache[attn_type] = model
+    return model
 
 
 # ─── Endpoints ────────────────────────────────────────
@@ -110,12 +138,12 @@ def _get_model(attn_type: str = "gqa"):
     response_model=InferenceResponse,
     summary="Run model inference",
     description=(
-        "Generate text using the OpenMythos Recurrent-Depth Transformer. "
-        "Requires PyTorch and OpenMythos to be installed. "
-        "If not available, returns setup instructions."
+        "Generate token IDs using the built-in mythosforge recurrent-depth "
+        "transformer. Supports both GQA and MLA attention. "
+        "Only requires PyTorch — no external ML packages needed."
     ),
     responses={
-        503: {"description": "PyTorch or OpenMythos not installed"},
+        503: {"description": "PyTorch not installed"},
     },
 )
 async def run_inference(request: InferenceRequest):
@@ -135,17 +163,17 @@ async def run_inference(request: InferenceRequest):
             status_code=503,
             detail={
                 "error": "PyTorch not installed",
-                "instructions": _openmythos_error,
+                "instructions": _import_error,
                 "config": config.model_dump(),
             },
         )
 
-    if not _openmythos_available:
+    if not _mythosforge_available:
         raise HTTPException(
             status_code=503,
             detail={
-                "error": "OpenMythos not installed",
-                "instructions": _openmythos_error,
+                "error": "mythosforge not available",
+                "instructions": _import_error,
                 "config": config.model_dump(),
             },
         )
@@ -154,16 +182,21 @@ async def run_inference(request: InferenceRequest):
 
     try:
         import torch
+        from mythosforge import OpenMythos
 
         # Load model
         load_start = time.perf_counter()
         model = _get_model(request.attn_type.value)
+        assert isinstance(model, OpenMythos)
         timings.model_load_seconds = round(time.perf_counter() - load_start, 4)
 
-        # Tokenize (simple character-level since we don't have a real tokenizer)
-        # OpenMythos doesn't include a tokenizer, so we use simple token mapping
+        # Tokenize prompt: simple ordinal mapping into vocab range
         vocab = model.config.vocab_size
-        input_ids = torch.tensor([list(range(min(len(request.prompt), 64))) % vocab], dtype=torch.long)
+        prompt_ids = [ord(c) % vocab for c in request.prompt]
+        prompt_ids = prompt_ids[: model.config.max_seq_len - request.max_tokens - 1]
+        input_ids = torch.tensor([prompt_ids], dtype=torch.long)
+        if input_ids.shape[1] == 0:
+            input_ids = torch.tensor([[0]], dtype=torch.long)
 
         # Prefill
         prefill_start = time.perf_counter()
@@ -171,39 +204,44 @@ async def run_inference(request: InferenceRequest):
             logits = model(input_ids, n_loops=request.n_loops)
         timings.prefill_seconds = round(time.perf_counter() - prefill_start, 4)
 
-        # Generation loop
+        # Generate
         gen_start = time.perf_counter()
-        generated_ids = []
-        current_ids = input_ids
-
-        with torch.no_grad():
-            for _ in range(request.max_tokens):
-                logits = model(current_ids, n_loops=request.n_loops)
-                next_logits = logits[:, -1, :] / max(request.temperature, 1e-8)
-
-                if request.temperature < 0.01:
-                    next_token = torch.argmax(next_logits, dim=-1, keepdim=True)
-                else:
-                    probs = torch.softmax(next_logits, dim=-1)
-                    next_token = torch.multinomial(probs, num_samples=1)
-
-                generated_ids.append(next_token.item())
-                current_ids = torch.cat([current_ids, next_token], dim=1)
-
+        generated = model.generate(
+            input_ids,
+            max_new_tokens=request.max_tokens,
+            n_loops=request.n_loops,
+            temperature=request.temperature,
+            top_k=50,
+        )
         timings.generation_seconds = round(time.perf_counter() - gen_start, 4)
+
+        # Extract generated token IDs
+        gen_ids = generated[0, input_ids.shape[1]:].tolist()
         timings.total_seconds = round(time.perf_counter() - total_start, 4)
+
+        # Build parameter info
+        counts = model.count_parameters()
+        A = model.injection.get_A().detach()
+        lti_min = round(A.min().item(), 6)
+        lti_max = round(A.max().item(), 6)
 
         return InferenceResponse(
             success=True,
             prompt=request.prompt,
-            generated_text=f"[{len(generated_ids)} tokens generated — OpenMythos demo mode (no tokenizer)]",
-            generated_tokens=[f"tok_{tid}" for tid in generated_ids],
-            num_generated=len(generated_ids),
+            generated_text=(
+                f"[{len(gen_ids)} tokens generados con {request.attn_type.value.upper()} "
+                f"— modo demo mythosforge v0.1.0]"
+            ),
+            generated_tokens=[f"tok_{tid}" for tid in gen_ids],
+            num_generated=len(gen_ids),
             config=config,
             timings=timings,
             note=(
-                "OpenMythos no incluye tokenizer entrenado. Los tokens generados son índices de vocabulario. "
-                "Para salida textual legible, se requiere Phase 3 (Tokenizer y datos) del roadmap."
+                f"Parametros: {counts['total']:,} | "
+                f"LTI A: [{lti_min}, {lti_max}] | "
+                f"Bucle: {request.n_loops} iters | "
+                f"mythosforge no incluye tokenizer (Phase 3 del roadmap). "
+                f"Los tokens son IDs de vocabulario mapeados desde ordinales."
             ),
         )
 
@@ -225,13 +263,14 @@ async def run_inference(request: InferenceRequest):
 @router.get(
     "/status",
     summary="Check inference dependencies",
-    description="Check if PyTorch and OpenMythos are available for inference.",
+    description="Check if PyTorch and mythosforge are available for inference.",
 )
 async def inference_status():
     _check_dependencies()
     return {
         "pytorch_available": _pytorch_available,
-        "openmythos_available": _openmythos_available,
+        "mythosforge_available": _mythosforge_available,
         "cached_models": list(_model_cache.keys()),
-        "setup_instructions": _openmythos_error,
+        "setup_instructions": _import_error,
+        "backend": "mythosforge v0.1.0 (built-in PyTorch)",
     }
