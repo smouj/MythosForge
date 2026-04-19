@@ -1,0 +1,19 @@
+diff --git a/open_mythos/main.py b/open_mythos/main.py
+index 0000000..1111111 100644
+--- a/open_mythos/main.py
++++ b/open_mythos/main.py
+@@ -681,7 +681,13 @@ class LTIInjection(nn.Module):
+         """
+         # Compute in log space to avoid 0 * inf = NaN when log_dt -> -inf, log_A -> +inf.
+         # dt * A_c = -exp(log_dt) * exp(log_A) = -exp(log_dt + log_A)
+-        return torch.exp(-torch.exp((self.log_dt + self.log_A).clamp(-20, 20)))
++        A = torch.exp(-torch.exp((self.log_dt + self.log_A).clamp(-20, 20)))
++        # Evita que float32 redondee exactamente a 1.0 tras actualizaciones extremas.
++        # Esto mantiene la garantía operacional de A < 1 usada por la prueba de estabilidad.
++        return torch.minimum(
++            A,
++            torch.nextafter(torch.ones_like(A), torch.zeros_like(A)),
++        )
+
+     def forward(
+         self, h: torch.Tensor, e: torch.Tensor, transformer_out: torch.Tensor

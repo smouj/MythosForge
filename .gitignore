@@ -1,0 +1,45 @@
+# Dependencies
+node_modules/
+.next/
+.pnpm-store/
+bun.lockb
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Build
+dist/
+build/
+*.tsbuildinfo
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+.venv/
+ENV/
+
+# Logs
+*.log
+npm-debug.log*
+dev.log
+
+# Misc
+.cache/
+.temp/
