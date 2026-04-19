@@ -13,33 +13,40 @@
     <meta property="og:title" content="MythosForge — Recurrent-Depth Transformer Research Lab">
     <meta property="og:description" content="Investigación abierta sobre arquitectura RDT: Prelude → Recurrent Block → Coda con atención MLA/GQA, MoE, inyección LTI y halting ACT.">
     <meta property="og:type" content="website">
-    <meta property="og:image" content="images/social_banner.png">
+    <meta property="og:image" content="https://smouj.github.io/MythosForge/images/social_banner.png">
     <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="https://smouj.github.io/MythosForge/images/social_banner.png">
 </head>
 <body>
     <!-- Navigation -->
     <header class="nav">
         <div class="nav-inner">
             <div class="nav-brand">
-                <img src="images/logo.png" alt="MythosForge" class="nav-logo">
+                <img src="images/logo_readme.png" alt="MythosForge" class="nav-logo">
                 <span class="nav-title">
                     <span class="text-cyan">Mythos</span><span class="text-gold">Forge</span>
                 </span>
             </div>
             <nav class="nav-links">
-                <a href="#architecture">Arquitectura</a>
-                <a href="#components">Componentes</a>
-                <a href="#validation">Validación</a>
-                <a href="#guide">Guía</a>
-                <a href="#files">Archivos</a>
-                <a href="#roadmap">Ruta</a>
-                <a href="#refs">Bibliografía</a>
-                <a href="#contribute" style="color:var(--cyan)">Contribuir</a>
+                <a href="#architecture" data-i18n="nav.architecture">Arquitectura</a>
+                <a href="#components" data-i18n="nav.components">Componentes</a>
+                <a href="#validation" data-i18n="nav.validation">Validación</a>
+                <a href="#guide" data-i18n="nav.guide">Guía</a>
+                <a href="#files" data-i18n="nav.files">Archivos</a>
+                <a href="#roadmap" data-i18n="nav.roadmap">Ruta</a>
+                <a href="#refs" data-i18n="nav.refs">Bibliografía</a>
+                <a href="#contribute" data-i18n="nav.contribute" style="color:var(--cyan)">Contribuir</a>
             </nav>
-            <a href="https://github.com/smouj/MythosForge" target="_blank" rel="noopener" class="nav-cta">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
-                GitHub
-            </a>
+            <div class="nav-actions">
+                <div class="lang-switcher" role="group" aria-label="Language selector">
+                    <button class="lang-btn active" data-lang="es" title="Español">ES</button>
+                    <button class="lang-btn" data-lang="en" title="English">EN</button>
+                </div>
+                <a href="https://github.com/smouj/MythosForge" target="_blank" rel="noopener" class="nav-cta">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+                    GitHub
+                </a>
+            </div>
         </div>
     </header>
 
@@ -52,29 +59,29 @@
                 <div class="hero-badge"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 00-2.91-.09z"/><path d="m12 15-3-3a22 22 0 012-3.95A12.88 12.88 0 0122 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 01-4 2z"/></svg></div>
             </div>
             <div class="hero-badges">
-                <span class="badge">Z.AI Research Lab</span>
-                <span class="badge badge-gold">Open Source</span>
+                <span class="badge" data-i18n="hero.badge1">Z.AI Research Lab</span>
+                <span class="badge badge-gold" data-i18n="hero.badge2">Open Source</span>
             </div>
             <h1 class="hero-title">
-                <span class="text-gradient-cyan">Mythos</span><span class="text-gradient-gold">Forge</span>
+                <span class="text-gradient-cyan" data-i18n="hero.title1">Mythos</span><span class="text-gradient-gold" data-i18n="hero.title2">Forge</span>
             </h1>
-            <p class="hero-desc">
+            <p class="hero-desc" data-i18n="hero.desc">
                 Laboratorio de investigación sobre <strong>Recurrent-Depth Transformers</strong>: 
                 razonamiento latente, MoE, atención MLA/GQA y halting adaptativo.
             </p>
             <div class="hero-actions">
                 <a href="#architecture" class="btn btn-primary">
-                    Explorar Arquitectura
+                    <span data-i18n="hero.btn1">Explorar Arquitectura</span>
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
                 </a>
                 <a href="#guide" class="btn btn-outline-gold">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 3h6v6l3 7H6l3-7V3z"/><path d="M9 3h6"/></svg>
-                    Guía Rápida
+                    <span data-i18n="hero.btn2">Guía Rápida</span>
                 </a>
             </div>
             <div class="disclaimer">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m21.73 18-8-14a2 2 0 00-3.48 0l-8 14A2 2 0 004 21h16a2 2 0 001.73-3z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-                <span>OpenMythos se presenta como <strong>reconstrucción teórica independiente</strong>, no afiliada a Anthropic. Este laboratorio no afirma equivalencia con ningún sistema propietario.</span>
+                <span data-i18n="hero.disclaimer"><span>OpenMythos se presenta como <strong>reconstrucción teórica independiente</strong>, no afiliada a Anthropic. Este laboratorio no afirma equivalencia con ningún sistema propietario.</span></span>
             </div>
         </div>
     </section>
@@ -83,53 +90,54 @@
     <section id="architecture" class="section">
         <div class="section-inner">
             <div class="section-header">
-                <span class="section-badge">Arquitectura</span>
-                <h2 class="section-title">Flujo Operativo</h2>
-                <p class="section-desc">La profundidad útil no viene de apilar capas distintas, sino de aplicar varias veces el mismo bloque compartido durante un único forward pass.</p>
+                <span class="section-badge" data-i18n="arch.sectionBadge">Arquitectura</span>
+                <h2 class="section-title" data-i18n="arch.sectionTitle">Flujo Operativo</h2>
+                <p class="section-desc" data-i18n="arch.sectionDesc">La profundidad útil no viene de apilar capas distintas, sino de aplicar varias veces el mismo bloque compartido durante un único forward pass.</p>
             </div>
             <div class="arch-diagram">
-                <div class="arch-block arch-input">Input Tokens</div>
+                <div class="arch-block arch-input" data-i18n="arch.input">Input Tokens</div>
                 <div class="arch-flow"><div class="flow-line"></div><div class="flow-arrow">▾</div></div>
                 <div class="arch-block arch-prelude">
-                    <span class="arch-label">PRELUDE</span>
-                    <span class="arch-sub">Bloque Transformer denso · FFN SwiGLU · 1× ejecución</span>
+                    <span class="arch-label" data-i18n="arch.prelude">PRELUDE</span>
+                    <span class="arch-sub" data-i18n="arch.preludeSub">Bloque Transformer denso · FFN SwiGLU · 1× ejecución</span>
                 </div>
                 <div class="arch-flow"><div class="flow-line"></div><div class="flow-label">h₀</div><div class="flow-arrow">▾</div></div>
                 <div class="arch-recurrent-wrap">
                     <div class="arch-block arch-recurrent">
-                        <span class="arch-label label-gold">RECURRENT BLOCK ×N</span>
-                        <span class="arch-sub">TransformerBlock compartido · Loop × max_loop_iters</span>
+                        <span class="arch-label label-gold" data-i18n="arch.recurrent">RECURRENT BLOCK ×N</span>
+                        <span class="arch-sub" data-i18n="arch.recurrentSub">TransformerBlock compartido · Loop × max_loop_iters</span>
                         <div class="arch-grid">
-                            <div class="arch-chip"><span class="chip-icon" style="color:#00D4FF">◈</span><div><strong>MLA / GQA</strong><small>Atención conmutable</small></div></div>
+                            <div class="arch-chip"><span class="chip-icon" style="color:#00D4FF">◈</span><div><strong data-i18n="arch.chip1.title">MLA / GQA</strong><small data-i18n="arch.chip1.sub">Atención conmutable</small></div></div>
                             <div class="arch-chip"><span class="chip-icon" style="color:#FFB800">◆</span><div><strong>MoE</strong><small>Routed + Shared Experts</small></div></div>
-                            <div class="arch-chip"><span class="chip-icon" style="color:#A78BFA">◉</span><div><strong>LoRA</strong><small>Adaptador por iteración</small></div></div>
-                            <div class="arch-chip"><span class="chip-icon" style="color:#00E87B">◎</span><div><strong>LTI</strong><small>Inyección estable</small></div></div>
+                            <div class="arch-chip"><span class="chip-icon" style="color:#A78BFA">◉</span><div><strong>LoRA</strong><small data-i18n="arch.chip3.sub">Adaptador por iteración</small></div></div>
+                            <div class="arch-chip"><span class="chip-icon" style="color:#00E87B">◎</span><div><strong>LTI</strong><small data-i18n="arch.chip4.sub">Inyección estable</small></div></div>
                         </div>
-                        <div class="arch-chip act-chip"><span class="chip-icon act-dot">●</span><span>ACT — Adaptive Computation Time (Halting por posición)</span></div>
+                        <div class="arch-chip act-chip"><span class="chip-icon act-dot">●</span><span data-i18n="arch.act">ACT — Adaptive Computation Time (Halting por posición)</span></div>
                     </div>
                     <div class="loop-indicator">
                         <svg width="32" height="64" viewBox="0 0 32 64"><path d="M4 0 C4 32, 28 32, 28 64" fill="none" stroke="rgba(255,184,0,0.4)" stroke-width="1.5" stroke-dasharray="4 3"/><path d="M24 59 L28 64 L32 59" fill="none" stroke="rgba(255,184,0,0.4)" stroke-width="1.5"/></svg>
-                        <span class="loop-label">LOOP</span>
+                        <span class="loop-label" data-i18n="arch.loop">LOOP</span>
                     </div>
                 </div>
                 <div class="arch-flow"><div class="flow-line"></div><div class="flow-label">h_T</div><div class="flow-arrow">▾</div></div>
                 <div class="arch-block arch-coda">
-                    <span class="arch-label label-green">CODA</span>
-                    <span class="arch-sub">Bloque Transformer denso · FFN SwiGLU · Proyección final</span>
+                    <span class="arch-label label-green" data-i18n="arch.coda">CODA</span>
+                    <span class="arch-sub" data-i18n="arch.codaSub">Bloque Transformer denso · FFN SwiGLU · Proyección final</span>
                 </div>
                 <div class="arch-flow"><div class="flow-line"></div><div class="flow-arrow">▾</div></div>
                 <div class="arch-output-wrap">
-                    <div class="arch-chip-small">RMSNorm</div>
+                    <div class="arch-chip-small" data-i18n="arch.rmsnorm">RMSNorm</div>
                     <span class="arch-arrow-small">→</span>
-                    <div class="arch-chip-small">LM Head</div>
+                    <div class="arch-chip-small" data-i18n="arch.lmhead">LM Head</div>
                 </div>
                 <div class="arch-flow"><div class="flow-line"></div><div class="flow-arrow">▾</div></div>
-                <div class="arch-block arch-output">Output Logits</div>
+                <div class="arch-block arch-output" data-i18n="arch.output">Output Logits</div>
             </div>
             <div class="info-box">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#00D4FF" stroke-width="2"><path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
                 <div>
-                    <strong>Regla Recurrente:</strong> h<sub>(t+1)</sub> = A · h<sub>t</sub> + B · e + Transformer(h<sub>t</sub>, e) — El razonamiento intermedio se acumula en el estado oculto sin expresarse como tokens visibles.
+                    <strong data-i18n="arch.infoTitle">Regla Recurrente:</strong>
+                    <span data-i18n="arch.info">h<sub>(t+1)</sub> = A · h<sub>t</sub> + B · e + Transformer(h<sub>t</sub>, e) — El razonamiento intermedio se acumula en el estado oculto sin expresarse como tokens visibles.</span>
                 </div>
             </div>
         </div>
@@ -139,40 +147,40 @@
     <section id="components" class="section section-alt">
         <div class="section-inner">
             <div class="section-header">
-                <span class="section-badge">Componentes</span>
-                <h2 class="section-title">Piezas Arquitectónicas</h2>
-                <p class="section-desc">Cada componente seleccionado por coherencia con la literatura más reciente en transformers recurrentes y razonamiento latente.</p>
+                <span class="section-badge" data-i18n="comp.sectionBadge">Componentes</span>
+                <h2 class="section-title" data-i18n="comp.sectionTitle">Piezas Arquitectónicas</h2>
+                <p class="section-desc" data-i18n="comp.sectionDesc">Cada componente seleccionado por coherencia con la literatura más reciente en transformers recurrentes y razonamiento latente.</p>
             </div>
             <div class="features-grid">
                 <div class="feature-card">
                     <div class="feature-icon" style="--c:#00D4FF"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"/><rect x="2" y="14" width="20" height="8" rx="2" ry="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg></div>
-                    <h3>Atención Conmutable MLA / GQA</h3>
-                    <p>GQA reduce caché KV compartiendo pares K/V. MLA comprime la ruta KV en un latente de bajo rango. Conmutable vía configuración.</p>
+                    <h3 data-i18n="comp.mla.title">Atención Conmutable MLA / GQA</h3>
+                    <p data-i18n="comp.mla.desc">GQA reduce caché KV compartiendo pares K/V. MLA comprime la ruta KV en un latente de bajo rango. Conmutable vía configuración.</p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon" style="--c:#FFB800"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 110 20 10 10 0 010-20z"/><path d="M2 12h20"/><path d="M12 2a15 15 0 014 10 15 15 0 01-4 10 15 15 0 01-4-10A15 15 0 0112 2z"/></svg></div>
-                    <h3>MoE en Bloque Recurrente</h3>
-                    <p>Routed experts top-K + shared experts siempre activos. Hereda de DeepSeekMoE la segmentación fina y aislamiento de expertos compartidos.</p>
+                    <h3 data-i18n="comp.moe.title">MoE en Bloque Recurrente</h3>
+                    <p data-i18n="comp.moe.desc">Routed experts top-K + shared experts siempre activos. Hereda de DeepSeekMoE la segmentación fina y aislamiento de expertos compartidos.</p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon" style="--c:#00E87B"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
-                    <h3>Inyección LTI Estable</h3>
-                    <p>Estabilidad espectral con A ∈ (0,1) por parametrización log-space. Parche numérico incluido para evitar saturación float32 en el borde.</p>
+                    <h3 data-i18n="comp.lti.title">Inyección LTI Estable</h3>
+                    <p data-i18n="comp.lti.desc">Estabilidad espectral con A ∈ (0,1) por parametrización log-space. Parche numérico incluido para evitar saturación float32 en el borde.</p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon" style="--c:#A78BFA"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
-                    <h3>ACT — Halting Adaptativo</h3>
-                    <p>Adaptive Computation Time aprende probabilidad de halting por posición. Algunas posiciones dejan de acumular actualizaciones antes que otras.</p>
+                    <h3 data-i18n="comp.act.title">ACT — Halting Adaptativo</h3>
+                    <p data-i18n="comp.act.desc">Adaptive Computation Time aprende probabilidad de halting por posición. Algunas posiciones dejan de acumular actualizaciones antes que otras.</p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon" style="--c:#FF6B9D"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg></div>
-                    <h3>Adaptador LoRA por Iteración</h3>
-                    <p>Cada iteración modifica su comportamiento con un adaptador LoRA dependiente de la iteración. Enriquece sin multiplicar parámetros estáticos.</p>
+                    <h3 data-i18n="comp.lora.title">Adaptador LoRA por Iteración</h3>
+                    <p data-i18n="comp.lora.desc">Cada iteración modifica su comportamiento con un adaptador LoRA dependiente de la iteración. Enriquece sin multiplicar parámetros estáticos.</p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon" style="--c:#00D4FF"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg></div>
-                    <h3>Prelude + Recurrent + Coda</h3>
-                    <p>Arquitectura de tres etapas: bloques densos de entrada y salida ejecutados una vez, con bloque recurrente compartido aplicado N veces.</p>
+                    <h3 data-i18n="comp.prelude.title">Prelude + Recurrent + Coda</h3>
+                    <p data-i18n="comp.prelude.desc">Arquitectura de tres etapas: bloques densos de entrada y salida ejecutados una vez, con bloque recurrente compartido aplicado N veces.</p>
                 </div>
             </div>
         </div>
@@ -182,38 +190,38 @@
     <section id="validation" class="section">
         <div class="section-inner">
             <div class="section-header">
-                <span class="section-badge">Validación</span>
-                <h2 class="section-title">Pruebas Ejecutadas</h2>
-                <p class="section-desc">Validación práctica en CPU con PyTorch 2.10.0+cpu. Configuraciones pequeñas verificadas.</p>
+                <span class="section-badge" data-i18n="val.sectionBadge">Validación</span>
+                <h2 class="section-title" data-i18n="val.sectionTitle">Pruebas Ejecutadas</h2>
+                <p class="section-desc" data-i18n="val.sectionDesc">Validación práctica en CPU con PyTorch 2.10.0+cpu. Configuraciones pequeñas verificadas.</p>
             </div>
             <div class="val-grid">
                 <div class="val-col">
-                    <h3 class="val-col-title">Chequeos de Inferencia</h3>
+                    <h3 class="val-col-title" data-i18n="val.col1Title">Chequeos de Inferencia</h3>
                     <div class="val-list">
-                        <div class="val-item pass"><span class="val-icon">✓</span><span>Import y construcción del modelo</span></div>
-                        <div class="val-item pass"><span class="val-icon">✓</span><span>Forward mínimo con GQA</span></div>
-                        <div class="val-item pass"><span class="val-icon">✓</span><span>Forward mínimo con MLA</span></div>
-                        <div class="val-item pass"><span class="val-icon">✓</span><span>Generación mínima autoregresiva</span></div>
-                        <div class="val-item pass"><span class="val-icon">✓</span><span>Matriz A de LTI en rango estable</span></div>
-                        <div class="val-item warn"><span class="val-icon">⚠</span><div><span>test_spectral_radius_stable_after_large_grad_step</span><small>Fallo numérico float32 en borde 1.0 — parche disponible</small></div></div>
+                        <div class="val-item pass"><span class="val-icon">✓</span><span data-i18n="val.check1">Import y construcción del modelo</span></div>
+                        <div class="val-item pass"><span class="val-icon">✓</span><span data-i18n="val.check2">Forward mínimo con GQA</span></div>
+                        <div class="val-item pass"><span class="val-icon">✓</span><span data-i18n="val.check3">Forward mínimo con MLA</span></div>
+                        <div class="val-item pass"><span class="val-icon">✓</span><span data-i18n="val.check4">Generación mínima autoregresiva</span></div>
+                        <div class="val-item pass"><span class="val-icon">✓</span><span data-i18n="val.check5">Matriz A de LTI en rango estable</span></div>
+                        <div class="val-item warn"><span class="val-icon">⚠</span><div><span>test_spectral_radius_stable_after_large_grad_step</span><small data-i18n="val.check6Note">Fallo numérico float32 en borde 1.0 — parche disponible</small></div></div>
                     </div>
                 </div>
                 <div class="val-col">
-                    <h3 class="val-col-title">Estado del Repositorio Original</h3>
+                    <h3 class="val-col-title" data-i18n="val.col2Title">Estado del Repositorio Original</h3>
                     <div class="val-list">
-                        <div class="val-item yes"><span>Repositorio público</span><span class="val-badge yes-badge">SI</span></div>
-                        <div class="val-item yes"><span>Licencia MIT</span><span class="val-badge yes-badge">SI</span></div>
-                        <div class="val-item yes"><span>Implementación PyTorch</span><span class="val-badge yes-badge">SI</span></div>
-                        <div class="val-item yes"><span>Ejemplo mínimo de uso</span><span class="val-badge yes-badge">SI</span></div>
-                        <div class="val-item yes"><span>Pruebas automatizadas</span><span class="val-badge yes-badge">SI</span></div>
-                        <div class="val-item no"><span>Pesos preentrenados</span><span class="val-badge no-badge">NO</span></div>
-                        <div class="val-item no"><span>Tokenizer propio</span><span class="val-badge no-badge">NO</span></div>
-                        <div class="val-item no"><span>Pipeline entrenamiento completo</span><span class="val-badge no-badge">NO</span></div>
-                        <div class="val-item no"><span>Equivalencia Claude Mythos</span><span class="val-badge no-badge">NO</span></div>
+                        <div class="val-item yes"><span data-i18n="val.repo1">Repositorio público</span><span class="val-badge yes-badge" data-i18n="val.yes">SI</span></div>
+                        <div class="val-item yes"><span data-i18n="val.repo2">Licencia MIT</span><span class="val-badge yes-badge" data-i18n="val.yes">SI</span></div>
+                        <div class="val-item yes"><span data-i18n="val.repo3">Implementación PyTorch</span><span class="val-badge yes-badge" data-i18n="val.yes">SI</span></div>
+                        <div class="val-item yes"><span data-i18n="val.repo4">Ejemplo mínimo de uso</span><span class="val-badge yes-badge" data-i18n="val.yes">SI</span></div>
+                        <div class="val-item yes"><span data-i18n="val.repo5">Pruebas automatizadas</span><span class="val-badge yes-badge" data-i18n="val.yes">SI</span></div>
+                        <div class="val-item no"><span data-i18n="val.repo6">Pesos preentrenados</span><span class="val-badge no-badge" data-i18n="val.no">NO</span></div>
+                        <div class="val-item no"><span data-i18n="val.repo7">Tokenizer propio</span><span class="val-badge no-badge" data-i18n="val.no">NO</span></div>
+                        <div class="val-item no"><span data-i18n="val.repo8">Pipeline entrenamiento completo</span><span class="val-badge no-badge" data-i18n="val.no">NO</span></div>
+                        <div class="val-item no"><span data-i18n="val.repo9">Equivalencia Claude Mythos</span><span class="val-badge no-badge" data-i18n="val.no">NO</span></div>
                     </div>
                     <div class="finding-box">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FFB800" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
-                        <div><strong>Hallazgo:</strong> <code>test_spectral_radius_stable_after_large_grad_step</code> falla por redondeo float32. Parche propuesto resuelve sin alterar la arquitectura.</div>
+                        <div><strong data-i18n="val.findingTitle">Hallazgo:</strong> <span data-i18n="val.finding"><code>test_spectral_radius_stable_after_large_grad_step</code> falla por redondeo float32. Parche propuesto resuelve sin alterar la arquitectura.</span></div>
                     </div>
                 </div>
             </div>
@@ -224,38 +232,38 @@
     <section id="guide" class="section section-alt">
         <div class="section-inner">
             <div class="section-header">
-                <span class="section-badge">Guía Rápida</span>
-                <h2 class="section-title">Replicar y Ejecutar Hoy</h2>
-                <p class="section-desc">Procedimiento mínimo sin adornos ni suposiciones sobre lo que el repositorio todavía no ofrece.</p>
+                <span class="section-badge" data-i18n="guide.sectionBadge">Guía Rápida</span>
+                <h2 class="section-title" data-i18n="guide.sectionTitle">Replicar y Ejecutar Hoy</h2>
+                <p class="section-desc" data-i18n="guide.sectionDesc">Procedimiento mínimo sin adornos ni suposiciones sobre lo que el repositorio todavía no ofrece.</p>
             </div>
             <div class="guide-grid">
                 <div>
-                    <h3>1. Preparación del entorno</h3>
+                    <h3 data-i18n="guide.step1">1. Preparación del entorno</h3>
                     <div class="code-block"><pre><code>git clone https://github.com/kyegomez/OpenMythos.git
 cd OpenMythos
 python -m venv .venv
 source .venv/bin/activate
 python -m pip install -U pip
 pip install -r requirements.txt</code></pre></div>
-                    <h3>2. Arranque rápido</h3>
+                    <h3 data-i18n="guide.step2">2. Arranque rápido</h3>
                     <div class="code-block"><pre><code>python example.py
 
 # o con verificación compacta:
 python openmythos_quickstart.py</code></pre></div>
-                    <h3>3. Validación</h3>
+                    <h3 data-i18n="guide.step3">3. Validación</h3>
                     <div class="code-block"><pre><code>pytest -q
 
 # Excluir fallo numérico conocido:
 pytest -q -k "not test_spectral_radius_stable_after_large_grad_step"</code></pre></div>
                 </div>
                 <div>
-                    <h3>4. Qué debes esperar</h3>
+                    <h3 data-i18n="guide.step4">4. Qué debes esperar</h3>
                     <div class="expect-list">
-                        <div class="expect-item"><span class="check">✓</span>El modelo construye embeddings, RoPE, prelude, recurrente, coda y LM head sin error.</div>
-                        <div class="expect-item"><span class="check">✓</span>El forward devuelve logits con forma (B, T, vocab_size).</div>
-                        <div class="expect-item"><span class="check">✓</span>generate añade tokens y reutiliza caché KV correctamente.</div>
-                        <div class="expect-item"><span class="check">✓</span>La variante MLA es más pesada conceptualmente, pero funcional en configuración pequeña.</div>
-                        <div class="expect-item"><span class="check">✓</span>La matriz A de LTI permanece en rango estable bajo condiciones normales.</div>
+                        <div class="expect-item"><span class="check">✓</span><span data-i18n="guide.expect1">El modelo construye embeddings, RoPE, prelude, recurrente, coda y LM head sin error.</span></div>
+                        <div class="expect-item"><span class="check">✓</span><span data-i18n="guide.expect2">El forward devuelve logits con forma (B, T, vocab_size).</span></div>
+                        <div class="expect-item"><span class="check">✓</span><span data-i18n="guide.expect3">generate añade tokens y reutiliza caché KV correctamente.</span></div>
+                        <div class="expect-item"><span class="check">✓</span><span data-i18n="guide.expect4">La variante MLA es más pesada conceptualmente, pero funcional en configuración pequeña.</span></div>
+                        <div class="expect-item"><span class="check">✓</span><span data-i18n="guide.expect5">La matriz A de LTI permanece en rango estable bajo condiciones normales.</span></div>
                     </div>
                 </div>
             </div>
@@ -266,30 +274,30 @@ pytest -q -k "not test_spectral_radius_stable_after_large_grad_step"</code></pre
     <section id="files" class="section">
         <div class="section-inner">
             <div class="section-header">
-                <span class="section-badge">Archivos</span>
-                <h2 class="section-title">Recursos Descargables</h2>
-                <p class="section-desc">Guía técnica, script de verificación y parche de estabilidad LTI.</p>
+                <span class="section-badge" data-i18n="files.sectionBadge">Archivos</span>
+                <h2 class="section-title" data-i18n="files.sectionTitle">Recursos Descargables</h2>
+                <p class="section-desc" data-i18n="files.sectionDesc">Guía técnica, script de verificación y parche de estabilidad LTI.</p>
             </div>
             <div class="files-grid">
                 <a href="https://github.com/smouj/MythosForge/blob/main/src/OpenMythos_Guia_Tecnica_2026.pdf" target="_blank" class="file-card">
                     <div class="file-icon" style="--c:#FF4D6A">📄</div>
-                    <strong>Guía Técnica 2026</strong>
-                    <small>PDF — Documento completo</small>
+                    <strong data-i18n="files.guide">Guía Técnica 2026</strong>
+                    <small data-i18n="files.guidePdf">PDF — Documento completo</small>
                 </a>
                 <a href="https://github.com/smouj/MythosForge/blob/main/src/OpenMythos_Guia_Tecnica_2026.docx" target="_blank" class="file-card">
                     <div class="file-icon" style="--c:#00D4FF">📄</div>
-                    <strong>Guía Técnica 2026</strong>
-                    <small>DOCX — Versión editable</small>
+                    <strong data-i18n="files.guide">Guía Técnica 2026</strong>
+                    <small data-i18n="files.guideDocx">DOCX — Versión editable</small>
                 </a>
                 <a href="https://github.com/smouj/MythosForge/blob/main/src/openmythos_quickstart.py" target="_blank" class="file-card">
                     <div class="file-icon" style="--c:#00E87B">🐍</div>
-                    <strong>Quickstart Script</strong>
-                    <small>Python — Verificación mínima</small>
+                    <strong data-i18n="files.quickstart">Quickstart Script</strong>
+                    <small data-i18n="files.quickstartDesc">Python — Verificación mínima</small>
                 </a>
                 <a href="https://github.com/smouj/MythosForge/blob/main/src/openmythos_lti_patch.diff" target="_blank" class="file-card">
                     <div class="file-icon" style="--c:#FFB800">🔧</div>
-                    <strong>Parche LTI</strong>
-                    <small>Diff — Estabilidad numérica</small>
+                    <strong data-i18n="files.patch">Parche LTI</strong>
+                    <small data-i18n="files.patchDesc">Diff — Estabilidad numérica</small>
                 </a>
             </div>
         </div>
@@ -299,18 +307,18 @@ pytest -q -k "not test_spectral_radius_stable_after_large_grad_step"</code></pre
     <section id="roadmap" class="section section-alt">
         <div class="section-inner">
             <div class="section-header">
-                <span class="section-badge">Hoja de Ruta</span>
-                <h2 class="section-title">De Prototipo a Banco de Pruebas</h2>
-                <p class="section-desc">Demostrar overfitting, pérdida estable y comportamiento predecible al aumentar n_loops antes de escalar.</p>
+                <span class="section-badge" data-i18n="road.sectionBadge">Hoja de Ruta</span>
+                <h2 class="section-title" data-i18n="road.sectionTitle">De Prototipo a Banco de Pruebas</h2>
+                <p class="section-desc" data-i18n="road.sectionDesc">Demostrar overfitting, pérdida estable y comportamiento predecible al aumentar n_loops antes de escalar.</p>
             </div>
             <div class="timeline">
-                <div class="timeline-item done"><div class="timeline-dot done"></div><div class="timeline-content"><div class="timeline-header"><span class="phase-badge done-badge">FASE 0</span><span class="done-tag">Completada</span></div><h4>Congelar versión</h4><p>Fork del repositorio, etiqueta de commit y requirements-lock para reproducibilidad total.</p></div></div>
-                <div class="timeline-item done"><div class="timeline-dot done"></div><div class="timeline-content"><div class="timeline-header"><span class="phase-badge done-badge">FASE 1</span><span class="done-tag">Completada</span></div><h4>Corregir estabilidad operativa</h4><p>Aplicar parche LTI para evitar que A alcance exactamente 1.0 en float32.</p></div></div>
-                <div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-content"><div class="timeline-header"><span class="phase-badge">FASE 2</span></div><h4>Añadir empaquetado</h4><p>pyproject.toml, instalación editable y CLI simple.</p></div></div>
-                <div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-content"><div class="timeline-header"><span class="phase-badge">FASE 3</span></div><h4>Tokenizer y datos</h4><p>Definir tokenizer, dataset y formato causal LM.</p></div></div>
-                <div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-content"><div class="timeline-header"><span class="phase-badge">FASE 4</span></div><h4>Entrenamiento mínimo</h4><p>Script train.py con warmup, clipping, checkpoints y logging.</p></div></div>
-                <div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-content"><div class="timeline-header"><span class="phase-badge">FASE 5</span></div><h4>Benchmarks</h4><p>Curvas vs loops, comparación GQA vs MLA, ablations MoE/LoRA/ACT.</p></div></div>
-                <div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-content"><div class="timeline-header"><span class="phase-badge">FASE 6</span></div><h4>Publicación y comparativa</h4><p>Comparativas contra transformers densos de igual presupuesto de FLOPs.</p></div></div>
+                <div class="timeline-item done"><div class="timeline-dot done"></div><div class="timeline-content"><div class="timeline-header"><span class="phase-badge done-badge" data-i18n="road.phase0">FASE 0</span><span class="done-tag" data-i18n="road.done">Completada</span></div><h4 data-i18n="road.phase0Title">Congelar versión</h4><p data-i18n="road.phase0Desc">Fork del repositorio, etiqueta de commit y requirements-lock para reproducibilidad total.</p></div></div>
+                <div class="timeline-item done"><div class="timeline-dot done"></div><div class="timeline-content"><div class="timeline-header"><span class="phase-badge done-badge" data-i18n="road.phase1">FASE 1</span><span class="done-tag" data-i18n="road.done">Completada</span></div><h4 data-i18n="road.phase1Title">Corregir estabilidad operativa</h4><p data-i18n="road.phase1Desc">Aplicar parche LTI para evitar que A alcance exactamente 1.0 en float32.</p></div></div>
+                <div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-content"><div class="timeline-header"><span class="phase-badge" data-i18n="road.phase2">FASE 2</span></div><h4 data-i18n="road.phase2Title">Añadir empaquetado</h4><p data-i18n="road.phase2Desc">pyproject.toml, instalación editable y CLI simple.</p></div></div>
+                <div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-content"><div class="timeline-header"><span class="phase-badge" data-i18n="road.phase3">FASE 3</span></div><h4 data-i18n="road.phase3Title">Tokenizer y datos</h4><p data-i18n="road.phase3Desc">Definir tokenizer, dataset y formato causal LM.</p></div></div>
+                <div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-content"><div class="timeline-header"><span class="phase-badge" data-i18n="road.phase4">FASE 4</span></div><h4 data-i18n="road.phase4Title">Entrenamiento mínimo</h4><p data-i18n="road.phase4Desc">Script train.py con warmup, clipping, checkpoints y logging.</p></div></div>
+                <div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-content"><div class="timeline-header"><span class="phase-badge" data-i18n="road.phase5">FASE 5</span></div><h4 data-i18n="road.phase5Title">Benchmarks</h4><p data-i18n="road.phase5Desc">Curvas vs loops, comparación GQA vs MLA, ablations MoE/LoRA/ACT.</p></div></div>
+                <div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-content"><div class="timeline-header"><span class="phase-badge" data-i18n="road.phase6">FASE 6</span></div><h4 data-i18n="road.phase6Title">Publicación y comparativa</h4><p data-i18n="road.phase6Desc">Comparativas contra transformers densos de igual presupuesto de FLOPs.</p></div></div>
             </div>
         </div>
     </section>
@@ -319,25 +327,25 @@ pytest -q -k "not test_spectral_radius_stable_after_large_grad_step"</code></pre
     <section id="contribute" class="section section-alt">
         <div class="section-inner">
             <div class="section-header">
-                <span class="section-badge">Contribuir</span>
-                <h2 class="section-title">Únete al Laboratorio</h2>
-                <p class="section-desc">MythosForge es un proyecto abierto. Hay muchas formas de colaborar, desde experimentos hasta documentación.</p>
+                <span class="section-badge" data-i18n="contribute.sectionBadge">Contribuir</span>
+                <h2 class="section-title" data-i18n="contribute.sectionTitle">Únete al Laboratorio</h2>
+                <p class="section-desc" data-i18n="contribute.sectionDesc">MythosForge es un proyecto abierto. Hay muchas formas de colaborar, desde experimentos hasta documentación.</p>
             </div>
             <div class="features-grid">
                 <a href="https://github.com/smouj/MythosForge/issues" target="_blank" class="feature-card" style="cursor:pointer;border-color:rgba(0,212,255,0.25)">
                     <div class="feature-icon" style="--c:#00D4FF"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>
-                    <h3>Reporta Issues</h3>
-                    <p>Encuentra bugs, errores en la documentación o mejoras posibles. Abre un issue con contexto claro y pasos para reproducir.</p>
+                    <h3 data-i18n="contribute.issues.title">Reporta Issues</h3>
+                    <p data-i18n="contribute.issues.desc">Encuentra bugs, errores en la documentación o mejoras posibles. Abre un issue con contexto claro y pasos para reproducir.</p>
                 </a>
                 <a href="https://github.com/smouj/MythosForge/pulls" target="_blank" class="feature-card" style="cursor:pointer;border-color:rgba(0,232,123,0.25)">
                     <div class="feature-icon" style="--c:#00E87B"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg></div>
-                    <h3>Envía Pull Requests</h3>
-                    <p>Parches de código, mejoras de arquitectura, nuevos experimentos o integraciones. Lee la guía CONTRIBUTING.md antes.</p>
+                    <h3 data-i18n="contribute.prs.title">Envía Pull Requests</h3>
+                    <p data-i18n="contribute.prs.desc">Parches de código, mejoras de arquitectura, nuevos experimentos o integraciones. Lee la guía CONTRIBUTING.md antes.</p>
                 </a>
                 <a href="https://github.com/smouj/MythosForge/discussions" target="_blank" class="feature-card" style="cursor:pointer;border-color:rgba(255,184,0,0.25)">
                     <div class="feature-icon" style="--c:#FFB800"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div>
-                    <h3>Discute Ideas</h3>
-                    <p>Propone experimentos, comparte resultados o debate sobre la arquitectura RDT en las discusiones del repositorio.</p>
+                    <h3 data-i18n="contribute.discuss.title">Discute Ideas</h3>
+                    <p data-i18n="contribute.discuss.desc">Propone experimentos, comparte resultados o debate sobre la arquitectura RDT en las discusiones del repositorio.</p>
                 </a>
             </div>
         </div>
@@ -347,9 +355,9 @@ pytest -q -k "not test_spectral_radius_stable_after_large_grad_step"</code></pre
     <section id="refs" class="section">
         <div class="section-inner">
             <div class="section-header">
-                <span class="section-badge">Bibliografía</span>
-                <h2 class="section-title">Referencias Académicas</h2>
-                <p class="section-desc">Trabajos clave que sostienen la hipótesis técnica.</p>
+                <span class="section-badge" data-i18n="refs.sectionBadge">Bibliografía</span>
+                <h2 class="section-title" data-i18n="refs.sectionTitle">Referencias Académicas</h2>
+                <p class="section-desc" data-i18n="refs.sectionDesc">Trabajos clave que sostienen la hipótesis técnica.</p>
             </div>
             <div class="refs-grid">
                 <a href="https://github.com/kyegomez/OpenMythos" target="_blank" class="ref-item"><span class="ref-id">R1</span><span>OpenMythos README — GitHub</span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
@@ -371,15 +379,17 @@ pytest -q -k "not test_spectral_radius_stable_after_large_grad_step"</code></pre
     <footer class="footer">
         <div class="footer-inner">
             <div class="footer-brand">
-                <img src="images/logo.png" alt="" class="footer-logo">
-                <span><span class="text-cyan">Mythos</span><span class="text-gold">Forge</span> — Creado por <a href="https://github.com/smouj" target="_blank" rel="noopener" style="color:var(--cyan)">Smouj013</a> con agentes de IA</span>
+                <img src="images/logo_readme.png" alt="" class="footer-logo">
+                <span data-i18n="footer.brand"><span class="text-cyan">Mythos</span><span class="text-gold">Forge</span> — Creado por <a href="https://github.com/smouj" target="_blank" rel="noopener" style="color:var(--cyan)">Smouj013</a> con agentes de IA</span>
             </div>
             <div class="footer-links">
-                <a href="https://github.com/kyegomez/OpenMythos" target="_blank">OpenMythos en GitHub</a>
+                <a href="https://github.com/kyegomez/OpenMythos" target="_blank">OpenMythos</a>
                 <a href="https://arxiv.org/abs/2604.12946" target="_blank">Parcae (arXiv)</a>
             </div>
-            <span class="footer-copy">Documento técnico independiente — Abril 2026</span>
+            <span class="footer-copy" data-i18n="footer.copy">Documento técnico independiente — Abril 2026</span>
         </div>
     </footer>
+
+    <script src="i18n.js"></script>
 </body>
 </html>
