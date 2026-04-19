@@ -1,22 +1,38 @@
 """
-MythosForge API — Main application.
+MythosForge API — Main application (v0.4.0).
 
-FastAPI server serving real project data, OpenAPI docs, and optional OpenMythos inference.
+Refactored with:
+- Environment-based settings (Pydantic Settings)
+- Restricted CORS (allowlist, not wildcard)
+- Safe error handlers (no internal detail leaks)
+- Request ID tracking
+- Structured logging
+- Optional API key authentication
+- Basic metrics collection
 """
 
 import time
 import logging
+import uuid
 from contextlib import asynccontextmanager
+
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
 
 from api import __version__, __api_version__
+from api.settings import settings
+from api.errors import (
+    AppError, NotFoundError,
+    not_found_handler, validation_error_handler,
+    app_error_handler, unhandled_exception_handler,
+)
+from api.deps import build_health_response
+from api.observability.metrics import metrics
 from api.models import (
-    APIRootResponse, ProjectInfo, ArchitectureResponse,
+    APIRootResponse, HealthResponse, ProjectInfo, ArchitectureResponse,
     ComponentsListResponse, ComponentDetail, ValidationResponse,
     RoadmapResponse, ReferencesResponse, Reference,
-    I18nResponse, HealthResponse,
+    I18nResponse,
 )
 from api.data import (
     PROJECT_INFO, ARCHITECTURE, COMPONENTS,
@@ -27,8 +43,8 @@ from api.routers.inference import router as inference_router
 # ─── Logging ──────────────────────────────────────────
 
 logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s | %(levelname)-7s | %(name)s | %(message)s",
+    level=getattr(logging, settings.log_level.upper(), logging.INFO),
+    format=settings.log_format,
     datefmt="%Y-%m-%d %H:%M:%S",
 )
 logger = logging.getLogger("mythosforge.api")
@@ -37,9 +53,13 @@ logger = logging.getLogger("mythosforge.api")
 
 _start_time = time.perf_counter()
 
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    logger.info(f"MythosForge API v{__version__} starting...")
+    logger.info(
+        "MythosForge API v%s starting | env=%s | auth=%s | metrics=%s",
+        __version__, settings.env, settings.auth_enabled, settings.metrics_enabled,
+    )
     yield
     logger.info("MythosForge API shutting down.")
 
@@ -50,8 +70,7 @@ app = FastAPI(
     title="MythosForge API",
     description=(
         "## 🔥 MythosForge — Recurrent-Depth Transformer Research Lab\n\n"
-        "REST API real para el laboratorio de investigación MythosForge basado en "
-        "[OpenMythos](https://github.com/kyegomez/OpenMythos).\n\n"
+        "REST API para el laboratorio de investigación MythosForge.\n\n"
         "### Arquitectura\n"
         "Prelude → **Recurrent Block** (×N loops) → Coda\n\n"
         "### Componentes\n"
@@ -60,10 +79,8 @@ app = FastAPI(
         "- **LTI**: Inyección estable Linear Time-Invariant, A ∈ (0,1)\n"
         "- **ACT**: Adaptive Computation Time — halting por posición\n"
         "- **LoRA**: Adaptador per-iteración con señal de profundidad\n\n"
-        "### Endpoints\n"
-        "- Datos del proyecto, arquitectura, componentes, validación, roadmap, referencias\n"
-        "- Traducciones i18n (ES/EN)\n"
-        "- Inferencia real con OpenMythos (requiere PyTorch)\n\n"
+        "### Seguridad\n"
+        f"Autenticación: {'habilitada' if settings.auth_enabled else 'deshabilitada (dev)'}\n\n"
         "### Aviso\n"
         "OpenMythos es una reconstrucción teórica independiente, no afiliada a Anthropic.\n"
         "MythosForge no afirma equivalencia con ningún sistema propietario.\n\n"
@@ -85,41 +102,57 @@ app = FastAPI(
     },
 )
 
-# ─── CORS ─────────────────────────────────────────────
+# ─── CORS (restricted) ──────────────────────────────
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_origins=settings.cors_origins,
+    allow_credentials=settings.cors_allow_credentials,
+    allow_methods=settings.cors_methods,
+    allow_headers=settings.cors_headers,
 )
+
+# ─── Exception handlers (safe — no detail leaks) ────
+
+app.add_exception_handler(NotFoundError, not_found_handler)
+app.add_exception_handler(AppError, app_error_handler)
+app.add_exception_handler(Exception, unhandled_exception_handler)
 
 # ─── Include routers ──────────────────────────────────
 
 app.include_router(inference_router)
 
 
-# ─── Middleware: Request logging ──────────────────────
+# ─── Middleware: Request ID + logging + metrics ──────
 
 @app.middleware("http")
-async def log_requests(request: Request, call_next):
+async def request_middleware(request: Request, call_next):
     start = time.perf_counter()
+
+    # Assign request ID if not present
+    rid = request.headers.get("x-request-id") or uuid.uuid4().hex[:12]
+    request.state.request_id = rid
+
+    # Process request
     response = await call_next(request)
+
+    # Metrics
     duration_ms = (time.perf_counter() - start) * 1000
-    logger.info(f"{request.method} {request.url.path} → {response.status_code} ({duration_ms:.1f}ms)")
-    return response
+    path = request.url.path
+    metrics.inc("http_requests_total")
+    metrics.inc(f"http_requests_total_{response.status_code}")
+    metrics.observe_latency(path, duration_ms)
 
-
-# ─── Exception handler ───────────────────────────────
-
-@app.exception_handler(Exception)
-async def global_exception_handler(request: Request, exc: Exception):
-    logger.error(f"Unhandled error on {request.url.path}: {exc}", exc_info=True)
-    return JSONResponse(
-        status_code=500,
-        content={"detail": "Internal server error", "error": str(exc)},
+    # Structured log
+    logger.info(
+        "%s %s → %d (%.1fms) [%s]",
+        request.method, path, response.status_code, duration_ms, rid,
     )
+
+    # Add request ID to response
+    response.headers["X-Request-ID"] = rid
+
+    return response
 
 
 # ═══════════════════════════════════════════════════════
@@ -146,6 +179,7 @@ async def api_root():
             "references": "/api/v1/references",
             "i18n": "/api/v1/i18n/{lang}",
             "inference": "/api/v1/inference",
+            "metrics": "/api/v1/metrics",
             "health": "/api/v1/health",
         },
     )
@@ -156,30 +190,17 @@ async def api_root():
 @app.get("/api/v1/health", response_model=HealthResponse, tags=["System"])
 async def health_check():
     """Health check — Returns service status and dependency availability."""
-    try:
-        import torch
-        pt = True
-    except ImportError:
-        pt = False
+    return build_health_response(time.perf_counter() - _start_time)
 
-    try:
-        import sys, os
-        src_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "src")
-        if src_dir not in sys.path:
-            sys.path.insert(0, src_dir)
-        from mythosforge import OpenMythos
-        mf = True
-    except ImportError:
-        mf = False
 
-    return HealthResponse(
-        status="healthy",
-        version=__version__,
-        api_version=__api_version__,
-        pytorch_available=pt,
-        openmythos_available=mf,
-        uptime_seconds=round(time.perf_counter() - _start_time, 2),
-    )
+# ─── Metrics ──────────────────────────────────────────
+
+@app.get("/api/v1/metrics", tags=["System"])
+async def get_metrics():
+    """Application metrics — counters, gauges, and latency histograms."""
+    if not settings.metrics_enabled:
+        return {"detail": "metrics_disabled", "metrics_enabled": False}
+    return metrics.snapshot()
 
 
 # ─── Project Info ─────────────────────────────────────
@@ -220,7 +241,9 @@ async def get_component(slug: str):
     for comp in COMPONENTS:
         if comp.slug == slug:
             return comp
-    raise _not_found(f"Component '{slug}' not found. Available: {[c.slug for c in COMPONENTS]}")
+    raise NotFoundError(
+        f"Component '{slug}' not found. Available: {[c.slug for c in COMPONENTS]}"
+    )
 
 
 # ─── Validation ───────────────────────────────────────
@@ -229,7 +252,7 @@ async def get_component(slug: str):
 async def get_validation():
     """Get all validation results — inference checks, repo status, and key findings."""
     return ValidationResponse(
-        environment="CPU · PyTorch 2.10.0+cpu",
+        environment="CPU · PyTorch 2.11.0+cpu",
         inference_checks=INFERENCE_CHECKS,
         repo_status=REPO_STATUS,
         key_finding=(
@@ -280,7 +303,9 @@ async def get_reference(ref_id: str):
     for ref in REFERENCES:
         if ref.id.upper() == ref_id.upper():
             return ref
-    raise _not_found(f"Reference '{ref_id}' not found. Available: {[r.id for r in REFERENCES]}")
+    raise NotFoundError(
+        f"Reference '{ref_id}' not found. Available: {[r.id for r in REFERENCES]}"
+    )
 
 
 # ─── i18n ─────────────────────────────────────────────
@@ -290,16 +315,11 @@ async def get_translations(lang: str):
     """Get all translations for a language (es or en). Returns ~30 translation keys."""
     translations = I18N_TRANSLATIONS.get(lang.lower())
     if not translations:
-        raise _not_found(f"Language '{lang}' not found. Available: {list(I18N_TRANSLATIONS.keys())}")
+        raise NotFoundError(
+            f"Language '{lang}' not found. Available: {list(I18N_TRANSLATIONS.keys())}"
+        )
     return I18nResponse(
         language=lang.lower(),
         total_keys=len(translations),
         translations=translations,
     )
-
-
-# ─── Helpers ──────────────────────────────────────────
-
-def _not_found(detail: str):
-    from fastapi import HTTPException
-    return HTTPException(status_code=404, detail=detail)
